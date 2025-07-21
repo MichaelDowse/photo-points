@@ -20,7 +20,7 @@ class AppTheme {
   static const Color success = Color(0xFF388E3C);
 
   static ThemeData lightTheme = ThemeData(
-    primarySwatch: MaterialColor(primaryGreen.value, {
+    primarySwatch: MaterialColor(primaryGreen.toARGB32(), {
       50: const Color(0xFFE8F5E8),
       100: const Color(0xFFC8E6C9),
       200: const Color(0xFFA5D6A7),
@@ -35,13 +35,11 @@ class AppTheme {
     colorScheme: const ColorScheme.light(
       primary: primaryGreen,
       secondary: accentGreen,
-      surface: surfaceGreen,
-      background: backgroundLight,
+      surface: backgroundLight,
       error: error,
       onPrimary: textLight,
       onSecondary: textLight,
       onSurface: textPrimary,
-      onBackground: textPrimary,
       onError: textLight,
     ),
     scaffoldBackgroundColor: backgroundLight,
@@ -136,7 +134,7 @@ class AppTheme {
   );
 
   static ThemeData darkTheme = ThemeData(
-    primarySwatch: MaterialColor(primaryGreen.value, {
+    primarySwatch: MaterialColor(primaryGreen.toARGB32(), {
       50: const Color(0xFFE8F5E8),
       100: const Color(0xFFC8E6C9),
       200: const Color(0xFFA5D6A7),
@@ -151,13 +149,11 @@ class AppTheme {
     colorScheme: const ColorScheme.dark(
       primary: lightGreen,
       secondary: accentGreen,
-      surface: Color(0xFF2C2C2C),
-      background: backgroundDark,
+      surface: backgroundDark,
       error: error,
       onPrimary: textLight,
       onSecondary: textLight,
       onSurface: textLight,
-      onBackground: textLight,
       onError: textLight,
     ),
     scaffoldBackgroundColor: backgroundDark,

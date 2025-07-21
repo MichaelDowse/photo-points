@@ -86,6 +86,9 @@ void main() {
       final photoGridWidget = tester.widget<PhotoGrid>(find.byType(PhotoGrid));
       expect(photoGridWidget.photos, equals(photos));
       expect(photoGridWidget.onPhotoTap, isNotNull);
+      
+      // Verify the callback variable is initially null
+      expect(tappedPhotoId, isNull);
     });
 
     testWidgets('should display initial photo indicator', (tester) async {

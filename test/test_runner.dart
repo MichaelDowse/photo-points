@@ -17,7 +17,7 @@ import 'widget/widgets/confirmation_dialog_test.dart' as confirmation_dialog_tes
 import 'widget/widgets/photo_grid_test.dart' as photo_grid_test;
 
 // Integration tests
-import 'integration/photo_point_workflow_test.dart' as photo_point_workflow_test;
+import '../integration_test/photo_point_workflow_test.dart' as photo_point_workflow_test;
 
 void main() {
   group('PhotoPoints Test Suite', () {

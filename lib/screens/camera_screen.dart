@@ -205,8 +205,12 @@ class _CameraScreenState extends State<CameraScreen> {
           child: FittedBox(
             fit: BoxFit.cover,
             child: SizedBox(
-              width: _controller!.value.previewSize?.height ?? 1,
-              height: _controller!.value.previewSize?.width ?? 1,
+              width: _currentOrientation == PhotoOrientation.portrait 
+                ? (_controller!.value.previewSize?.height ?? 1)
+                : (_controller!.value.previewSize?.width ?? 1),
+              height: _currentOrientation == PhotoOrientation.portrait
+                ? (_controller!.value.previewSize?.width ?? 1) 
+                : (_controller!.value.previewSize?.height ?? 1),
               child: CameraPreview(_controller!),
             ),
           ),
@@ -284,7 +288,7 @@ class _CameraScreenState extends State<CameraScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(40),
               ),
               child: Row(

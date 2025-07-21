@@ -38,7 +38,7 @@ class _PermissionsDialogState extends State<PermissionsDialog> {
                   entry.value,
                   _permissionService.getPermissionDescription(entry.key),
                 );
-              }).toList(),
+              }),
             ],
           );
         },

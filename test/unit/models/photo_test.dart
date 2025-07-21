@@ -205,9 +205,7 @@ void main() {
       
       // If photo has location, it should have both lat and lng
       // Compass direction should be within valid range
-      if (photo.compassDirection != null) {
-        expect(photo.compassDirection >= 0 && photo.compassDirection < 360, true);
-      }
+      expect(photo.compassDirection >= 0 && photo.compassDirection < 360, true);
     });
   });
 }

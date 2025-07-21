@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:photopoints/services/database_service.dart';
 import 'package:photopoints/providers/app_state_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import '../test_data.dart';
+import 'test_data.dart';
 import 'dart:io';
 
 void main() {

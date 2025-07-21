@@ -179,11 +179,6 @@ flutter test test/unit/         # Unit tests
 flutter test test/widget/       # Widget tests
 flutter test test/integration/  # Integration tests
 
-# Build for development
-flutter build apk --debug    # Android debug
-flutter build apk --release  # Android release
-flutter build ios --release  # iOS release
-
 # Analyze code
 flutter analyze
 

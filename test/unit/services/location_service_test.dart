@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:photopoints/services/location_service.dart';
 import 'package:photopoints/models/location_data.dart';
 import '../../test_data.dart';
 

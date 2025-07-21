@@ -50,6 +50,7 @@ class MockPhotoService extends Mock implements PhotoService {
     _isCameraInitialized = true;
   }
   
+  @override
   List<CameraDescription> get cameras => _mockCameras;
   
   bool get isCameraInitialized => _isCameraInitialized;
