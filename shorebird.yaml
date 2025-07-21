@@ -1,0 +1,6 @@
+# This file is used to configure the Shorebird updater for your application.
+# Learn more about configuring this file at https://docs.shorebird.dev/reference/shorebird-yaml
+
+# This is the unique identifier for your app. It is used to identify your app
+# when you create a release or patch. This should not be changed.
+app_id: # To be filled in after login

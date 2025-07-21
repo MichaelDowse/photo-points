@@ -1,0 +1,29 @@
+{
+  "coverage": {
+    "enabled": true,
+    "html": true,
+    "lcov": true,
+    "exclude": [
+      "**/*.g.dart",
+      "**/*.freezed.dart",
+      "**/*.mocks.dart",
+      "**/test/**",
+      "**/integration_test/**"
+    ],
+    "thresholds": {
+      "statements": 80,
+      "branches": 75,
+      "functions": 80,
+      "lines": 80
+    }
+  },
+  "test_execution": {
+    "timeout": "30m",
+    "concurrency": 4,
+    "retry": 2
+  },
+  "reporting": {
+    "format": ["tap", "json"],
+    "output_directory": "test_reports"
+  }
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Distribution method: development, ad-hoc, app-store, enterprise -->
+    <key>method</key>
+    <string>ad-hoc</string>
+    
+    <!-- Your Apple Developer Team ID -->
+    <key>teamID</key>
+    <string>YOUR_TEAM_ID</string>
+    
+    <!-- Signing style: automatic or manual -->
+    <key>signingStyle</key>
+    <string>automatic</string>
+    
+    <!-- Disable bitcode for smaller file sizes -->
+    <key>compileBitcode</key>
+    <false/>
+    
+    <!-- Disable app thinning for universal compatibility -->
+    <key>thinning</key>
+    <string>&lt;none&gt;</string>
+    
+    <!-- Export destination -->
+    <key>destination</key>
+    <string>export</string>
+    
+    <!-- Strip Swift symbols for smaller file sizes -->
+    <key>stripSwiftSymbols</key>
+    <true/>
+    
+    <!-- Upload symbols to Apple for crash reporting -->
+    <key>uploadSymbols</key>
+    <true/>
+    
+    <!-- Upload bitcode to Apple (only for app-store method) -->
+    <key>uploadBitcode</key>
+    <false/>
+    
+    <!-- Include manifest for wireless distribution -->
+    <key>manifest</key>
+    <dict>
+        <key>appURL</key>
+        <string>https://your-domain.com/photopoints.ipa</string>
+        <key>displayImageURL</key>
+        <string>https://your-domain.com/icon-57.png</string>
+        <key>fullSizeImageURL</key>
+        <string>https://your-domain.com/icon-512.png</string>
+    </dict>
+</dict>
+</plist>
+
+<!-- 
+SETUP INSTRUCTIONS:
+1. Copy this file to ios/exportOptions.plist
+2. Replace YOUR_TEAM_ID with your actual Apple Developer Team ID
+3. Adjust the method based on your distribution needs:
+   - development: For testing on registered devices
+   - ad-hoc: For Firebase App Distribution
+   - app-store: For App Store submission
+   - enterprise: For enterprise distribution
+4. Remove the manifest section if not needed for wireless distribution
+5. Add ios/exportOptions.plist to .gitignore to keep team-specific settings private
+
+FINDING YOUR TEAM ID:
+- Xcode: Preferences → Accounts → Select team → View Details
+- Apple Developer Portal: https://developer.apple.com/account → Membership
+- Command line: security find-identity -v -p codesigning
+-->
