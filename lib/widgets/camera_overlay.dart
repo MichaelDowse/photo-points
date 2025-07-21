@@ -23,13 +23,16 @@ class CameraOverlay extends StatelessWidget {
 
         return Opacity(
           opacity: opacity,
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: _getImageProvider(initialPhotoPath),
-                fit: BoxFit.cover,
+          child: FittedBox(
+            fit: BoxFit.cover,
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: _getImageProvider(initialPhotoPath),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
