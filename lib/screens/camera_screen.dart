@@ -274,45 +274,52 @@ class _CameraScreenState extends State<CameraScreen> {
 
   Widget _buildBottomBar() {
     return Container(
-      color: Colors.black,
+      color: Colors.transparent,
       padding: const EdgeInsets.all(16),
       child: SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            
-            // Capture button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: _isCapturing ? null : _capturePhoto,
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.grey[300]!,
-                        width: 4,
+            // Capture button with semi-transparent background
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(40),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: _isCapturing ? null : _capturePhoto,
+                    child: Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        border: Border.all(
+                          color: Colors.grey[300]!,
+                          width: 3,
+                        ),
                       ),
-                    ),
-                    child: _isCapturing
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 3,
+                      child: _isCapturing
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                color: Colors.black,
+                              ),
+                            )
+                          : const Icon(
+                              Icons.camera_alt,
+                              size: 28,
                               color: Colors.black,
                             ),
-                          )
-                        : const Icon(
-                            Icons.camera_alt,
-                            size: 32,
-                            color: Colors.black,
-                          ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

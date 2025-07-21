@@ -31,7 +31,7 @@ class PhotoService {
 
   Future<CameraController?> initializeCamera({
     CameraDescription? camera,
-    ResolutionPreset resolutionPreset = ResolutionPreset.high,
+    ResolutionPreset resolutionPreset = ResolutionPreset.max,
   }) async {
     try {
       if (cameras.isEmpty) {
