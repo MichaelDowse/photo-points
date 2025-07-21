@@ -49,8 +49,48 @@ class AppStateProvider extends ChangeNotifier {
       // Add photos to database (only for native platforms)
       // On web, photos are already included in the PhotoPoint
       if (!kIsWeb) {
+        List<Photo> updatedPhotos = [];
         for (Photo photo in photoPoint.photos) {
-          await _databaseService.insertPhoto(photo);
+          // Rename photo file with correct format
+          final newFilePath = await _photoService.renamePhotoWithCorrectFilename(
+            photo.filePath,
+            photoPoint.name,
+            photo.takenAt,
+          );
+          
+          // Update photo with new file path if rename was successful
+          Photo updatedPhoto = photo;
+          if (newFilePath != null) {
+            updatedPhoto = Photo(
+              id: photo.id,
+              photoPointId: photo.photoPointId,
+              filePath: newFilePath,
+              latitude: photo.latitude,
+              longitude: photo.longitude,
+              compassDirection: photo.compassDirection,
+              takenAt: photo.takenAt,
+              isInitial: photo.isInitial,
+              orientation: photo.orientation,
+            );
+          }
+          
+          updatedPhotos.add(updatedPhoto);
+          await _databaseService.insertPhoto(updatedPhoto);
+        }
+        
+        // Update the photo point with renamed photos
+        if (updatedPhotos.isNotEmpty) {
+          final updatedPhotoPoint = PhotoPoint(
+            id: photoPoint.id,
+            name: photoPoint.name,
+            notes: photoPoint.notes,
+            latitude: photoPoint.latitude,
+            longitude: photoPoint.longitude,
+            compassDirection: photoPoint.compassDirection,
+            createdAt: photoPoint.createdAt,
+            photos: updatedPhotos,
+          );
+          await _databaseService.updatePhotoPoint(updatedPhotoPoint);
         }
       }
       
@@ -100,18 +140,46 @@ class AppStateProvider extends ChangeNotifier {
     _clearError();
     
     try {
-      await _databaseService.insertPhoto(photo);
+      // Get the photo point to access its name
+      final photoPoint = await _databaseService.getPhotoPoint(photoPointId);
+      if (photoPoint == null) {
+        throw Exception('Photo point not found');
+      }
+      
+      // Rename photo file with correct format (only for native platforms)
+      Photo updatedPhoto = photo;
+      if (!kIsWeb) {
+        final newFilePath = await _photoService.renamePhotoWithCorrectFilename(
+          photo.filePath,
+          photoPoint.name,
+          photo.takenAt,
+        );
+        
+        if (newFilePath != null) {
+          updatedPhoto = Photo(
+            id: photo.id,
+            photoPointId: photo.photoPointId,
+            filePath: newFilePath,
+            latitude: photo.latitude,
+            longitude: photo.longitude,
+            compassDirection: photo.compassDirection,
+            takenAt: photo.takenAt,
+            isInitial: photo.isInitial,
+            orientation: photo.orientation,
+          );
+        }
+      }
+      
+      await _databaseService.insertPhoto(updatedPhoto);
       
       // Check if this photo can provide missing location/compass data for the photo point
-      final photoPoint = await _databaseService.getPhotoPoint(photoPointId);
-      if (photoPoint != null && 
-          (!photoPoint.hasLocation || !photoPoint.hasCompassDirection)) {
+      if (!photoPoint.hasLocation || !photoPoint.hasCompassDirection) {
         // Update photo point with location/compass data from this photo
         await _databaseService.updatePhotoPointLocationIfMissing(
           photoPointId,
-          photo.latitude,
-          photo.longitude,
-          photo.compassDirection,
+          updatedPhoto.latitude,
+          updatedPhoto.longitude,
+          updatedPhoto.compassDirection,
         );
       }
       

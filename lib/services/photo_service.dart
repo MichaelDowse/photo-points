@@ -681,6 +681,31 @@ class PhotoService {
     return '${sanitizedName}_$dateStr';
   }
 
+  Future<String?> renamePhotoWithCorrectFilename(String currentFilePath, String photoPointName, DateTime photoDate) async {
+    try {
+      final currentFile = File(currentFilePath);
+      if (!await currentFile.exists()) {
+        debugPrint('Photo file does not exist: $currentFilePath');
+        return null;
+      }
+
+      // Generate the correct filename
+      final correctFilename = generateShareFilename(photoPointName, photoDate);
+      
+      // Get the directory from the current path
+      final directory = currentFile.parent;
+      final newFilePath = join(directory.path, '$correctFilename.jpg');
+      
+      // Rename the file
+      final newFile = await currentFile.rename(newFilePath);
+      
+      return newFile.path;
+    } catch (e) {
+      debugPrint('Error renaming photo file: $e');
+      return null;
+    }
+  }
+
   void dispose() {
     _controller?.dispose();
     _controller = null;
