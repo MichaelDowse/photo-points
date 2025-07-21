@@ -73,12 +73,14 @@ class LocationService {
         accuracy: LocationAccuracy.best,
         distanceFilter: 1,
       ),
-    ).map((position) => LocationData(
-      latitude: position.latitude,
-      longitude: position.longitude,
-      accuracy: position.accuracy,
-      timestamp: DateTime.now(),
-    ));
+    ).map(
+      (position) => LocationData(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        accuracy: position.accuracy,
+        timestamp: DateTime.now(),
+      ),
+    );
   }
 
   Future<double> getDistanceBetween(
@@ -129,11 +131,11 @@ class LocationService {
     }
   }
 
-  bool isLocationAccurate(double accuracy) {
-    return accuracy <= 10.0; // Within 10 meters is considered accurate
-  }
-
-  bool isOnSite(LocationData current, LocationData target, {double tolerance = 5.0}) {
+  bool isOnSite(
+    LocationData current,
+    LocationData target, {
+    double tolerance = 12.0,
+  }) {
     return current.isWithinAccuracy(target, toleranceMeters: tolerance);
   }
 }
