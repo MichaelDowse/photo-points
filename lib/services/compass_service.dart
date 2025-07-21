@@ -49,16 +49,12 @@ class CompassService {
         }
       }
 
-      // Get current heading
-      CompassEvent? event = await FlutterCompass.events?.first;
-      if (event?.heading != null) {
-        return CompassData(
-          heading: event!.heading!,
-          accuracy: event.accuracy ?? 0.0,
-          timestamp: DateTime.now(),
-        );
-      }
-      return null;
+      // Start the stream if not already running to ensure we use the same source
+      getCompassStream();
+      
+      // Wait for the next compass reading from the SAME stream that navigation uses
+      final compassData = await _compassController!.stream.first;
+      return compassData;
     } catch (e) {
       debugPrint('Error getting compass heading: $e');
       return null;
@@ -70,11 +66,12 @@ class CompassService {
     
     _compassSubscription ??= FlutterCompass.events?.listen((CompassEvent event) {
         if (event.heading != null) {
-          _compassController?.add(CompassData(
+          final compassData = CompassData(
             heading: event.heading!,
             accuracy: event.accuracy ?? 0.0,
             timestamp: DateTime.now(),
-          ));
+          );
+          _compassController?.add(compassData);
         }
       });
     
