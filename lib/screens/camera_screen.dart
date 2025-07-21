@@ -219,9 +219,20 @@ class _CameraScreenState extends State<CameraScreen> {
         // Photo overlay for subsequent photos
         if (!widget.isInitialPhoto && _showOverlay && widget.initialPhotoPath != null)
           Positioned.fill(
-            child: CameraOverlay(
-              initialPhotoPath: widget.initialPhotoPath!,
-              opacity: 0.5,
+            child: FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: _currentOrientation == PhotoOrientation.portrait 
+                  ? (_controller!.value.previewSize?.height ?? 1)
+                  : (_controller!.value.previewSize?.width ?? 1),
+                height: _currentOrientation == PhotoOrientation.portrait
+                  ? (_controller!.value.previewSize?.width ?? 1) 
+                  : (_controller!.value.previewSize?.height ?? 1),
+                child: CameraOverlay(
+                  initialPhotoPath: widget.initialPhotoPath!,
+                  opacity: 0.5,
+                ),
+              ),
             ),
           ),
         
