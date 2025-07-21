@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:camera/camera.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:async';
@@ -59,6 +60,7 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   void initState() {
     super.initState();
+    _enableLandscapeMode();
     _initializeCamera();
     _startLocationUpdates();
     _startCompassUpdates();
@@ -68,12 +70,29 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   void dispose() {
+    _restorePortraitMode();
     _controller?.dispose();
     _locationSubscription?.cancel();
     _compassSubscription?.cancel();
     _orientationTimer?.cancel();
     _compassService.dispose();
     super.dispose();
+  }
+
+  Future<void> _enableLandscapeMode() async {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+
+  Future<void> _restorePortraitMode() async {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   Future<void> _initializeCamera() async {
