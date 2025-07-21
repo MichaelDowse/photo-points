@@ -56,6 +56,7 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('New Photo Point'),
         actions: [
@@ -87,13 +88,19 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            16 + MediaQuery.of(context).padding.bottom,
+          ),
           children: [
             _buildPhotoSection(),
             const SizedBox(height: 24),
             _buildLocationSection(),
             const SizedBox(height: 24),
             _buildFormSection(),
+            const SizedBox(height: 48), // Extra bottom padding for better scrolling
           ],
         ),
       ),
