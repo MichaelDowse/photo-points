@@ -513,7 +513,7 @@ class PhotoService {
       final imageWidth = watermarkedImage.width;
       final imageHeight = watermarkedImage.height;
       
-      final fontSize = (imageWidth * 0.04).round().clamp(20, 40);
+      final fontSize = (imageWidth * 0.08).round().clamp(40, 80);
       final margin = (imageWidth * 0.03).round().clamp(15, 30);
       final textPadding = (fontSize * 0.3).round().clamp(3, 8);
       
