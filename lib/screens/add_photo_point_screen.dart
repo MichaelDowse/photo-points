@@ -7,6 +7,7 @@ import '../providers/app_state_provider.dart';
 import '../models/photo_point.dart';
 import '../models/photo.dart';
 import '../services/photo_service.dart';
+import '../widgets/photo_point_form_widgets.dart';
 import 'camera_screen.dart';
 
 class AddPhotoPointScreen extends StatefulWidget {
@@ -61,30 +62,8 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
       appBar: AppBar(
         title: const Text('New Photo Point'),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: ElevatedButton(
-              onPressed: _canSave ? _savePhotoPoint : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _canSave ? Colors.orange : Colors.grey[400],
-                foregroundColor: Colors.white,
-                elevation: 4,
-                shadowColor: _canSave
-                    ? Colors.orange.withValues(alpha: 0.4)
-                    : Colors.grey.withValues(alpha: 0.2),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-              ),
-              child: const Text(
-                'Save',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ),
+          SaveButton(
+            onPressed: _canSave ? _savePhotoPoint : null,
           ),
         ],
       ),
@@ -102,7 +81,10 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
             const SizedBox(height: 24),
             _buildLocationSection(),
             const SizedBox(height: 24),
-            _buildFormSection(),
+            PhotoPointDetailsForm(
+              nameController: _nameController,
+              notesController: _notesController,
+            ),
             const SizedBox(
               height: 48,
             ), // Extra bottom padding for better scrolling
@@ -332,42 +314,6 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
     );
   }
 
-  Widget _buildFormSection() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Details', style: Theme.of(context).textTheme.headlineSmall),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Photo Point Name',
-                hintText: 'Enter a name for this photo point',
-              ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter a name';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _notesController,
-              decoration: const InputDecoration(
-                labelText: 'Notes (Optional)',
-                hintText: 'Add any notes about this location',
-              ),
-              maxLines: 3,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Future<void> _capturePhoto() async {
     setState(() {

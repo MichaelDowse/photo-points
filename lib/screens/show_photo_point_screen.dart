@@ -10,6 +10,7 @@ import '../services/photo_service.dart';
 import '../widgets/photo_grid.dart';
 import '../widgets/confirmation_dialog.dart';
 import 'camera_screen.dart';
+import 'edit_photo_point_screen.dart';
 
 class ShowPhotoPointScreen extends StatefulWidget {
   final String photoPointId;
@@ -44,6 +45,19 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
               PopupMenuButton<String>(
                 onSelected: (value) => _handleMenuSelection(value, photoPoint),
                 itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.edit,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text('Edit Photo Point'),
+                      ],
+                    ),
+                  ),
                   PopupMenuItem(
                     value: 'share',
                     child: Row(
@@ -118,8 +132,10 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
             _buildDetailRow(
               Icons.location_on,
               'GPS Coordinates',
-              photoPoint.initialPhoto?.latitude.toStringAsFixed(6) ?? 'N/A',
-              photoPoint.initialPhoto?.longitude.toStringAsFixed(6) ?? 'N/A',
+              photoPoint.latitude?.toStringAsFixed(6) ?? 
+                photoPoint.initialPhoto?.latitude.toStringAsFixed(6) ?? 'N/A',
+              photoPoint.longitude?.toStringAsFixed(6) ?? 
+                photoPoint.initialPhoto?.longitude.toStringAsFixed(6) ?? 'N/A',
             ),
             const SizedBox(height: 12),
             _buildDetailRow(
@@ -242,6 +258,9 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
 
   void _handleMenuSelection(String value, PhotoPoint photoPoint) {
     switch (value) {
+      case 'edit':
+        _editPhotoPoint(photoPoint);
+        break;
       case 'share':
         _sharePhotoPoint(photoPoint);
         break;
@@ -252,6 +271,15 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
         _deletePhotoPoint(photoPoint);
         break;
     }
+  }
+
+  Future<void> _editPhotoPoint(PhotoPoint photoPoint) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditPhotoPointScreen(photoPoint: photoPoint),
+      ),
+    );
   }
 
   Future<void> _sharePhotoPoint(PhotoPoint photoPoint) async {
