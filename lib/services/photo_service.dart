@@ -331,21 +331,24 @@ class PhotoService {
       
       for (int i = 0; i < photoPoint.photos.length; i++) {
         final Photo photo = photoPoint.photos[i];
-        final file = File(photo.filePath);
-        if (await file.exists()) {
-          String? shareFilePath = photo.filePath;
-          
-          if (withWatermark) {
-            final watermarkedPath = await _createWatermarkedPhoto(photo.filePath, photo);
-            if (watermarkedPath != null) {
-              shareFilePath = watermarkedPath;
-              tempFiles.add(watermarkedPath);
+        final filePath = photo.filePath;
+        if (filePath != null) {
+          final file = File(filePath);
+          if (await file.exists()) {
+            String shareFilePath = filePath;
+            
+            if (withWatermark) {
+              final watermarkedPath = await _createWatermarkedPhoto(filePath, photo);
+              if (watermarkedPath != null) {
+                shareFilePath = watermarkedPath;
+                tempFiles.add(watermarkedPath);
+              }
             }
+            
+            final customFilename = generateShareFilename(photoPoint.name, photo.takenAt);
+            final suffix = photoPoint.photos.length > 1 ? '_${i + 1}' : '';
+            files.add(XFile(shareFilePath, name: '$customFilename$suffix.jpg'));
           }
-          
-          final customFilename = generateShareFilename(photoPoint.name, photo.takenAt);
-          final suffix = photoPoint.photos.length > 1 ? '_${i + 1}' : '';
-          files.add(XFile(shareFilePath, name: '$customFilename$suffix.jpg'));
         }
       }
 

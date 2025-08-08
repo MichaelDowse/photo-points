@@ -392,7 +392,8 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    _buildFullSizeImage(photo.filePath),
+                    if (photo.filePath != null)
+                      _buildFullSizeImage(photo.filePath!),
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
@@ -461,7 +462,7 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
 
     if (confirmed == true && mounted) {
       try {
-        await context.read<AppStateProvider>().deletePhoto(photo.id, photo.filePath);
+        await context.read<AppStateProvider>().deletePhoto(photo.id, photo.filePath ?? '');
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -478,9 +479,11 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
   Future<void> _sharePhoto(Photo photo) async {
     try {
       final photoPoint = context.read<AppStateProvider>().getPhotoPointById(widget.photoPointId);
-      await _photoService.sharePhoto(photo.filePath, 
-          photoData: photo, 
-          photoPointName: photoPoint?.name);
+      if (photo.filePath != null) {
+        await _photoService.sharePhoto(photo.filePath!, 
+            photoData: photo, 
+            photoPointName: photoPoint?.name);
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -496,10 +499,12 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
   Future<void> _sharePhotoWithWatermark(Photo photo) async {
     try {
       final photoPoint = context.read<AppStateProvider>().getPhotoPointById(widget.photoPointId);
-      await _photoService.sharePhoto(photo.filePath, 
-          withWatermark: true, 
-          photoData: photo, 
-          photoPointName: photoPoint?.name);
+      if (photo.filePath != null) {
+        await _photoService.sharePhoto(photo.filePath!, 
+            withWatermark: true, 
+            photoData: photo, 
+            photoPointName: photoPoint?.name);
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

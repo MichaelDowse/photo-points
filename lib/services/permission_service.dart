@@ -1,10 +1,25 @@
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:io' show Platform;
 
 class PermissionService {
   static final PermissionService _instance = PermissionService._internal();
   factory PermissionService() => _instance;
   PermissionService._internal();
+
+  /// Returns the appropriate storage/photos permission for the current platform
+  /// On Android 13+ (API 33+), uses Permission.photos
+  /// On older Android versions and iOS, uses Permission.storage
+  List<Permission> get _storagePermissions {
+    if (Platform.isAndroid) {
+      // For Android 13+ we primarily use photos permission
+      // but we'll check both to ensure compatibility
+      return [Permission.photos, Permission.storage];
+    } else {
+      // iOS and other platforms
+      return [Permission.photos];
+    }
+  }
 
   Future<bool> requestCameraPermission() async {
     await Permission.camera.request();
@@ -29,14 +44,41 @@ class PermissionService {
   }
 
   Future<bool> requestStoragePermission() async {
-    await Permission.storage.request();
+    debugPrint('🔍 Requesting storage permissions...');
+    
+    // Request all relevant storage permissions for the platform
+    for (final permission in _storagePermissions) {
+      try {
+        await permission.request();
+        debugPrint('📱 Requested ${permission.toString()}');
+      } catch (e) {
+        debugPrint('⚠️ Failed to request ${permission.toString()}: $e');
+      }
+    }
+    
     await Future.delayed(const Duration(milliseconds: 200));
     return checkStoragePermission();
   }
 
   Future<bool> checkStoragePermission() async {
-    final status = await Permission.storage.status;
-    return status.isGranted;
+    debugPrint('🔍 Checking storage permissions...');
+    
+    // Check if ANY of the storage permissions are granted
+    bool anyGranted = false;
+    for (final permission in _storagePermissions) {
+      try {
+        final status = await permission.status;
+        debugPrint('📱 ${permission.toString()} status: $status');
+        if (status.isGranted) {
+          anyGranted = true;
+        }
+      } catch (e) {
+        debugPrint('⚠️ Failed to check ${permission.toString()}: $e');
+      }
+    }
+    
+    debugPrint('💾 Overall storage permission granted: $anyGranted');
+    return anyGranted;
   }
 
   Future<bool> requestPhotosPermission() async {
@@ -70,17 +112,31 @@ class PermissionService {
       return _buildPermissionMap(currentStatuses);
     }
     
-    final Map<Permission, PermissionStatus> statuses = await [
+    // Request core permissions
+    final corePermissions = [
       Permission.camera,
       Permission.location,
-      Permission.storage,
-      Permission.photos,
-    ].request();
+    ];
+    
+    final Map<Permission, PermissionStatus> statuses = await corePermissions.request();
+    
+    // Add storage permissions to the map
+    for (final permission in _storagePermissions) {
+      try {
+        await permission.request();
+        statuses[permission] = await permission.status;
+      } catch (e) {
+        debugPrint('⚠️ Failed to request ${permission.toString()}: $e');
+      }
+    }
 
     debugPrint('📱 Camera status: ${statuses[Permission.camera]}');
     debugPrint('📍 Location status: ${statuses[Permission.location]}');
-    debugPrint('💾 Storage status: ${statuses[Permission.storage]}');
-    debugPrint('🖼️ Photos status: ${statuses[Permission.photos]}');
+    
+    // Print storage permission statuses
+    for (final permission in _storagePermissions) {
+      debugPrint('💾 ${permission.toString()} status: ${statuses[permission]}');
+    }
 
     // Wait a moment for iOS to process the permission changes
     await Future.delayed(const Duration(milliseconds: 500));
@@ -92,20 +148,47 @@ class PermissionService {
   }
   
   Future<Map<Permission, PermissionStatus>> _getCurrentPermissionStatuses() async {
-    return {
+    final statuses = <Permission, PermissionStatus>{
       Permission.camera: await Permission.camera.status,
       Permission.location: await Permission.location.status,
-      Permission.storage: await Permission.storage.status,
-      Permission.photos: await Permission.photos.status,
     };
+    
+    // Add storage permissions
+    for (final permission in _storagePermissions) {
+      try {
+        statuses[permission] = await permission.status;
+      } catch (e) {
+        debugPrint('⚠️ Failed to get status for ${permission.toString()}: $e');
+      }
+    }
+    
+    return statuses;
   }
   
   Map<String, bool> _buildPermissionMap(Map<Permission, PermissionStatus> statuses) {
+    // Check if ANY of the storage permissions are granted
+    bool storageGranted = false;
+    bool photosGranted = false;
+    
+    for (final permission in _storagePermissions) {
+      final status = statuses[permission];
+      if (status?.isGranted == true) {
+        if (permission == Permission.storage) {
+          storageGranted = true;
+        } else if (permission == Permission.photos) {
+          photosGranted = true;
+        }
+      }
+    }
+    
+    // For the UI, we'll show storage as granted if ANY storage permission is granted
+    final effectiveStorageGranted = storageGranted || photosGranted;
+    
     return {
       'camera': statuses[Permission.camera]?.isGranted ?? false,
       'location': statuses[Permission.location]?.isGranted ?? false,
-      'storage': statuses[Permission.storage]?.isGranted ?? false,
-      'photos': statuses[Permission.photos]?.isGranted ?? false,
+      'storage': effectiveStorageGranted,
+      'photos': photosGranted,
     };
   }
 
@@ -114,19 +197,19 @@ class PermissionService {
     
     final cameraStatus = await Permission.camera.status;
     final locationStatus = await Permission.location.status;
-    final storageStatus = await Permission.storage.status;
-    final photosStatus = await Permission.photos.status;
     
     debugPrint('📱 Camera status: $cameraStatus');
     debugPrint('📍 Location status: $locationStatus');
-    debugPrint('💾 Storage status: $storageStatus');
-    debugPrint('🖼️ Photos status: $photosStatus');
+    
+    // Check storage permissions using the helper method
+    final storageGranted = await checkStoragePermission();
+    final photosGranted = await checkPhotosPermission();
     
     return {
       'camera': cameraStatus.isGranted,
       'location': locationStatus.isGranted,
-      'storage': storageStatus.isGranted,
-      'photos': photosStatus.isGranted,
+      'storage': storageGranted,
+      'photos': photosGranted,
     };
   }
 
@@ -160,48 +243,63 @@ class PermissionService {
 
 
   Future<bool> shouldShowRationale(String permissionName) async {
-    Permission permission;
     switch (permissionName) {
       case 'camera':
-        permission = Permission.camera;
-        break;
+        final status = await Permission.camera.status;
+        return status.isDenied && !status.isPermanentlyDenied;
       case 'location':
-        permission = Permission.location;
-        break;
+        final status = await Permission.location.status;
+        return status.isDenied && !status.isPermanentlyDenied;
       case 'storage':
-        permission = Permission.storage;
-        break;
+        // Check if ANY of the storage permissions should show rationale
+        for (final permission in _storagePermissions) {
+          try {
+            final status = await permission.status;
+            if (status.isDenied && !status.isPermanentlyDenied) {
+              return true;
+            }
+          } catch (e) {
+            debugPrint('⚠️ Failed to check rationale for ${permission.toString()}: $e');
+          }
+        }
+        return false;
       case 'photos':
-        permission = Permission.photos;
-        break;
+        final status = await Permission.photos.status;
+        return status.isDenied && !status.isPermanentlyDenied;
       default:
         return false;
     }
-    
-    final status = await permission.status;
-    return status.isDenied && !status.isPermanentlyDenied;
   }
 
   Future<bool> isPermanentlyDenied(String permissionName) async {
-    Permission permission;
     switch (permissionName) {
       case 'camera':
-        permission = Permission.camera;
-        break;
+        final status = await Permission.camera.status;
+        return status.isPermanentlyDenied;
       case 'location':
-        permission = Permission.location;
-        break;
+        final status = await Permission.location.status;
+        return status.isPermanentlyDenied;
       case 'storage':
-        permission = Permission.storage;
-        break;
+        // Check if ALL storage permissions are permanently denied
+        bool allPermanentlyDenied = true;
+        for (final permission in _storagePermissions) {
+          try {
+            final status = await permission.status;
+            if (!status.isPermanentlyDenied) {
+              allPermanentlyDenied = false;
+              break;
+            }
+          } catch (e) {
+            debugPrint('⚠️ Failed to check permanently denied for ${permission.toString()}: $e');
+            allPermanentlyDenied = false;
+          }
+        }
+        return allPermanentlyDenied;
       case 'photos':
-        permission = Permission.photos;
-        break;
+        final status = await Permission.photos.status;
+        return status.isPermanentlyDenied;
       default:
         return false;
     }
-    
-    final status = await permission.status;
-    return status.isPermanentlyDenied;
   }
 }

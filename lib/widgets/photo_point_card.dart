@@ -43,8 +43,8 @@ class PhotoPointCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (photoPoint.initialPhoto != null)
-                    _buildThumbnail(context, photoPoint.initialPhoto!.filePath),
+                  if (photoPoint.initialPhoto?.filePath != null)
+                    _buildThumbnail(context, photoPoint.initialPhoto!.filePath!),
                 ],
               ),
               const SizedBox(height: 12),
