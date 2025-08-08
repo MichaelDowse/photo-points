@@ -20,7 +20,8 @@ enum PhotoOrientation {
 class Photo {
   final String id;
   final String photoPointId;
-  final String filePath;
+  final String? filePath;
+  final String? assetId;
   final double latitude;
   final double longitude;
   final double compassDirection;
@@ -31,7 +32,8 @@ class Photo {
   Photo({
     required this.id,
     required this.photoPointId,
-    required this.filePath,
+    this.filePath,
+    this.assetId,
     required this.latitude,
     required this.longitude,
     required this.compassDirection,
@@ -48,6 +50,7 @@ class Photo {
     String? id,
     String? photoPointId,
     String? filePath,
+    String? assetId,
     double? latitude,
     double? longitude,
     double? compassDirection,
@@ -59,6 +62,7 @@ class Photo {
       id: id ?? this.id,
       photoPointId: photoPointId ?? this.photoPointId,
       filePath: filePath ?? this.filePath,
+      assetId: assetId ?? this.assetId,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       compassDirection: compassDirection ?? this.compassDirection,

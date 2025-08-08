@@ -76,6 +76,7 @@ dependencies:
   
   # Photo library access
   image_picker: ^1.0.7
+  photo_manager: ^3.5.0
   
   # EXIF data extraction
   exif: ^3.3.0

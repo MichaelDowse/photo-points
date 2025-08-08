@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:photo_manager/photo_manager.dart';
 import '../models/photo.dart';
 
 class PhotoGrid extends StatelessWidget {
@@ -51,10 +52,10 @@ class PhotoGrid extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: FutureBuilder<bool>(
-                future: _checkImageExists(photo.filePath),
+                future: _checkPhotoExists(photo),
                 builder: (context, snapshot) {
                   if (snapshot.data == true) {
-                    return _buildImage(photo.filePath);
+                    return _buildImage(photo);
                   } else {
                     return _buildErrorPlaceholder(context);
                   }
@@ -207,37 +208,92 @@ class PhotoGrid extends StatelessWidget {
     }
   }
 
-  Widget _buildImage(String filePath) {
+  Widget _buildImage(Photo photo) {
     if (kIsWeb) {
-      return Image.network(
-        filePath,
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height: double.infinity,
-        errorBuilder: (context, error, stackTrace) {
-          return _buildErrorPlaceholder(context);
-        },
-      );
+      // On web, use network image with file path
+      if (photo.filePath != null) {
+        return Image.network(
+          photo.filePath!,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          errorBuilder: (context, error, stackTrace) {
+            return _buildErrorPlaceholder(context);
+          },
+        );
+      } else {
+        return const Center(child: Text('No image'));
+      }
     } else {
-      return Image.file(
-        File(filePath),
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height: double.infinity,
-        errorBuilder: (context, error, stackTrace) {
-          return _buildErrorPlaceholder(context);
-        },
-      );
+      // On native platforms, try asset ID first, then file path
+      if (photo.assetId != null) {
+        return FutureBuilder<AssetEntity?>(
+          future: AssetEntity.fromId(photo.assetId!),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              return Image(
+                image: AssetEntityImageProvider(snapshot.data!, isOriginal: false),
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(child: Text('Failed to load'));
+                },
+              );
+            } else if (photo.filePath != null) {
+              // Fallback to file path
+              return Image.file(
+                File(photo.filePath!),
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                errorBuilder: (context, error, stackTrace) {
+                  return _buildErrorPlaceholder(context);
+                },
+              );
+            } else {
+              return const Center(child: Text('Failed to load'));
+            }
+          },
+        );
+      } else if (photo.filePath != null) {
+        return Image.file(
+          File(photo.filePath!),
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          errorBuilder: (context, error, stackTrace) {
+            return _buildErrorPlaceholder(context);
+          },
+        );
+      } else {
+        return const Center(child: Text('No image'));
+      }
     }
   }
 
-  Future<bool> _checkImageExists(String filePath) async {
+  Future<bool> _checkPhotoExists(Photo photo) async {
     try {
       if (kIsWeb) {
-        return filePath.isNotEmpty;
+        return photo.filePath?.isNotEmpty ?? false;
       } else {
-        final file = File(filePath);
-        return await file.exists();
+        // Try asset ID first
+        if (photo.assetId != null) {
+          try {
+            final asset = await AssetEntity.fromId(photo.assetId!);
+            return asset != null;
+          } catch (e) {
+            // Fall through to file path check
+          }
+        }
+        
+        // Fallback to file path
+        if (photo.filePath != null) {
+          final file = File(photo.filePath!);
+          return await file.exists();
+        }
+        
+        return false;
       }
     } catch (e) {
       return false;

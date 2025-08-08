@@ -346,6 +346,7 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
           id: _uuid.v4(),
           photoPointId: photoPoint.id,
           filePath: result['photoPath'],
+          assetId: result['assetId'],
           latitude: result['latitude'],
           longitude: result['longitude'],
           compassDirection: result['compassDirection'],

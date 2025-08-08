@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:exif/exif.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:photo_manager/photo_manager.dart';
 import '../models/photo.dart';
 import '../models/photo_point.dart';
 
@@ -72,20 +73,46 @@ class PhotoService {
         // On web, return the blob URL as is
         return imageFile.path;
       } else {
-        // On native platforms, copy to app directory
-        final Directory appDir = await getApplicationDocumentsDirectory();
-        final String photoDir = join(appDir.path, 'photos', photoPointId);
-        
-        // Create directory if it doesn't exist
-        await Directory(photoDir).create(recursive: true);
-        
-        final String filePath = join(photoDir, '$photoId.jpg');
-        
-        // Move the file to our designated location
-        await File(imageFile.path).copy(filePath);
-        await File(imageFile.path).delete();
-        
-        return filePath;
+        // On native platforms, save to Photos Library
+        try {
+          // Request permission to access photos
+          final PermissionState ps = await PhotoManager.requestPermissionExtend();
+          if (!ps.hasAccess) {
+            debugPrint('No permission to access photos');
+            return null;
+          }
+          
+          // Save to Photos Library and get asset ID
+          final AssetEntity? asset = await PhotoManager.editor.saveImageWithPath(
+            imageFile.path,
+            title: 'PhotoPoint_${photoPointId}_$photoId',
+          );
+          
+          if (asset != null) {
+            // Clean up temporary file
+            await File(imageFile.path).delete();
+            return asset.id;
+          } else {
+            debugPrint('Failed to save photo to Photos Library');
+            return null;
+          }
+        } catch (e) {
+          debugPrint('Error saving to Photos Library: $e');
+          // Fallback: save to app directory as before
+          final Directory appDir = await getApplicationDocumentsDirectory();
+          final String photoDir = join(appDir.path, 'photos', photoPointId);
+          
+          // Create directory if it doesn't exist
+          await Directory(photoDir).create(recursive: true);
+          
+          final String filePath = join(photoDir, '$photoId.jpg');
+          
+          // Move the file to our designated location
+          await File(imageFile.path).copy(filePath);
+          await File(imageFile.path).delete();
+          
+          return filePath;
+        }
       }
     } catch (e) {
       debugPrint('Error capturing photo: $e');
@@ -106,7 +133,54 @@ class PhotoService {
     }
   }
 
-  Future<Uint8List?> getPhotoBytes(String filePath) async {
+  Future<Uint8List?> getPhotoBytesFromAssetId(String assetId) async {
+    try {
+      if (kIsWeb) {
+        return null; // Asset IDs not supported on web
+      }
+      
+      final AssetEntity? asset = await AssetEntity.fromId(assetId);
+      if (asset != null) {
+        return await asset.originBytes;
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error getting photo bytes from asset ID: $e');
+      return null;
+    }
+  }
+
+  Future<Uint8List?> getPhotoBytes(Photo photo) async {
+    try {
+      // Try asset ID first (new method)
+      if (photo.assetId != null) {
+        final bytes = await getPhotoBytesFromAssetId(photo.assetId!);
+        if (bytes != null) return bytes;
+      }
+      
+      // Fallback to file path (legacy method)
+      if (photo.filePath != null) {
+        if (kIsWeb) {
+          // On web, use XFile to read bytes from blob URL
+          final xFile = XFile(photo.filePath!);
+          return await xFile.readAsBytes();
+        } else {
+          final file = await getPhotoFile(photo.filePath!);
+          if (file != null) {
+            return await file.readAsBytes();
+          }
+        }
+      }
+      
+      return null;
+    } catch (e) {
+      debugPrint('Error getting photo bytes: $e');
+      return null;
+    }
+  }
+
+  @Deprecated('Use getPhotoBytes(Photo photo) instead')
+  Future<Uint8List?> getPhotoBytesLegacy(String filePath) async {
     try {
       if (kIsWeb) {
         // On web, use XFile to read bytes from blob URL
@@ -125,9 +199,23 @@ class PhotoService {
     }
   }
 
-  Future<img.Image?> getPhotoImage(String filePath) async {
+  Future<img.Image?> getPhotoImage(Photo photo) async {
     try {
-      final bytes = await getPhotoBytes(filePath);
+      final bytes = await getPhotoBytes(photo);
+      if (bytes != null) {
+        return img.decodeImage(bytes);
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error decoding photo image: $e');
+      return null;
+    }
+  }
+
+  @Deprecated('Use getPhotoImage(Photo photo) instead')
+  Future<img.Image?> getPhotoImageLegacy(String filePath) async {
+    try {
+      final bytes = await getPhotoBytesLegacy(filePath);
       if (bytes != null) {
         return img.decodeImage(bytes);
       }
@@ -140,7 +228,7 @@ class PhotoService {
 
   Future<String?> resizePhoto(String filePath, {int maxWidth = 1024, int maxHeight = 1024}) async {
     try {
-      final image = await getPhotoImage(filePath);
+      final image = await getPhotoImageLegacy(filePath);
       if (image == null) return null;
 
       final resized = img.copyResize(
@@ -275,7 +363,7 @@ class PhotoService {
 
   Future<img.Image?> createOverlayImage(String baseImagePath, {double opacity = 0.5}) async {
     try {
-      final baseImage = await getPhotoImage(baseImagePath);
+      final baseImage = await getPhotoImageLegacy(baseImagePath);
       if (baseImage == null) return null;
 
       // Create a copy of the image with adjusted opacity
@@ -482,7 +570,7 @@ class PhotoService {
 
   Future<String?> _createWatermarkedPhoto(String originalPath, Photo photo) async {
     try {
-      final image = await getPhotoImage(originalPath);
+      final image = await getPhotoImageLegacy(originalPath);
       if (image == null) return null;
 
       final watermarkedImage = await _addWatermark(image, photo);

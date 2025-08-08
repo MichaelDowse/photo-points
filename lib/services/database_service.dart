@@ -35,7 +35,7 @@ class DatabaseService {
     
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -71,6 +71,13 @@ class DatabaseService {
         ALTER TABLE photos ADD COLUMN orientation TEXT DEFAULT 'portrait'
       ''');
     }
+    
+    if (oldVersion < 4) {
+      // Migration from version 3 to 4: Add asset_id column for photo library storage
+      await db.execute('''
+        ALTER TABLE photos ADD COLUMN asset_id TEXT
+      ''');
+    }
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -90,7 +97,8 @@ class DatabaseService {
       CREATE TABLE photos (
         id TEXT PRIMARY KEY,
         photo_point_id TEXT NOT NULL,
-        file_path TEXT NOT NULL,
+        file_path TEXT,
+        asset_id TEXT,
         latitude REAL NOT NULL,
         longitude REAL NOT NULL,
         compass_direction REAL NOT NULL,
@@ -138,6 +146,7 @@ class DatabaseService {
         'id': photo.id,
         'photo_point_id': photo.photoPointId,
         'file_path': photo.filePath,
+        'asset_id': photo.assetId,
         'latitude': photo.latitude,
         'longitude': photo.longitude,
         'compass_direction': photo.compassDirection,
@@ -231,6 +240,7 @@ class DatabaseService {
         id: photoMaps[i]['id'],
         photoPointId: photoMaps[i]['photo_point_id'],
         filePath: photoMaps[i]['file_path'],
+        assetId: photoMaps[i]['asset_id'],
         latitude: photoMaps[i]['latitude'],
         longitude: photoMaps[i]['longitude'],
         compassDirection: photoMaps[i]['compass_direction'],

@@ -474,10 +474,11 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
       final photoId = _uuid.v4();
       
       String? finalPhotoPath;
+      String? assetId;
       DateTime photoTakenAt;
       
       if (_isFromLibrary) {
-        // Copy library photo to app storage
+        // Copy library photo to app storage (fallback) or save to Photos Library
         finalPhotoPath = await _photoService.copyLibraryPhotoToStorage(
           sourcePath: _capturedPhotoPath!,
           photoPointId: photoPointId,
@@ -488,12 +489,19 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
         final originalDate = await _photoService.extractDateTimeFromImage(_capturedPhotoPath!);
         photoTakenAt = originalDate ?? DateTime.now();
       } else {
-        // Photo is already in the right location from camera
-        finalPhotoPath = _capturedPhotoPath!;
+        // Photo from camera - could be file path or asset ID
+        String photoPath = _capturedPhotoPath!;
+        bool isAssetId = !photoPath.contains('/') && !kIsWeb;
+        
+        if (isAssetId) {
+          assetId = photoPath;
+        } else {
+          finalPhotoPath = photoPath;
+        }
         photoTakenAt = DateTime.now();
       }
       
-      if (finalPhotoPath == null) {
+      if (finalPhotoPath == null && assetId == null) {
         throw Exception('Failed to process photo');
       }
       
@@ -501,6 +509,7 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
         id: photoId,
         photoPointId: photoPointId,
         filePath: finalPhotoPath,
+        assetId: assetId,
         latitude: _latitude ?? 0.0, // Use 0.0 as fallback, will be updated later
         longitude: _longitude ?? 0.0,
         compassDirection: _compassDirection ?? 0.0,

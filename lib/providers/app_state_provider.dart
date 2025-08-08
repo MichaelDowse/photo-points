@@ -52,11 +52,13 @@ class AppStateProvider extends ChangeNotifier {
         List<Photo> updatedPhotos = [];
         for (Photo photo in photoPoint.photos) {
           // Rename photo file with correct format
-          final newFilePath = await _photoService.renamePhotoWithCorrectFilename(
-            photo.filePath,
-            photoPoint.name,
-            photo.takenAt,
-          );
+          final newFilePath = photo.filePath != null 
+            ? await _photoService.renamePhotoWithCorrectFilename(
+                photo.filePath!,
+                photoPoint.name,
+                photo.takenAt,
+              )
+            : null;
           
           // Update photo with new file path if rename was successful
           Photo updatedPhoto = photo;
@@ -149,11 +151,13 @@ class AppStateProvider extends ChangeNotifier {
       // Rename photo file with correct format (only for native platforms)
       Photo updatedPhoto = photo;
       if (!kIsWeb) {
-        final newFilePath = await _photoService.renamePhotoWithCorrectFilename(
-          photo.filePath,
-          photoPoint.name,
-          photo.takenAt,
-        );
+        final newFilePath = photo.filePath != null
+          ? await _photoService.renamePhotoWithCorrectFilename(
+              photo.filePath!,
+              photoPoint.name,
+              photo.takenAt,
+            )
+          : null;
         
         if (newFilePath != null) {
           updatedPhoto = Photo(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:camera/camera.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:async';
@@ -379,9 +380,13 @@ class _CameraScreenState extends State<CameraScreen> {
         throw Exception('Failed to capture photo');
       }
 
+      // Determine if this is a file path or asset ID
+      bool isAssetId = !photoPath.contains('/') && !kIsWeb;
+      
       // Return the result
       final result = {
-        'photoPath': photoPath,
+        'photoPath': isAssetId ? null : photoPath,
+        'assetId': isAssetId ? photoPath : null,
         'latitude': location.latitude,
         'longitude': location.longitude,
         'compassDirection': compass.normalizedHeading,

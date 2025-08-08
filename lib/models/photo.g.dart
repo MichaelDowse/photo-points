@@ -9,7 +9,8 @@ part of 'photo.dart';
 Photo _$PhotoFromJson(Map<String, dynamic> json) => Photo(
   id: json['id'] as String,
   photoPointId: json['photoPointId'] as String,
-  filePath: json['filePath'] as String,
+  filePath: json['filePath'] as String?,
+  assetId: json['assetId'] as String?,
   latitude: (json['latitude'] as num).toDouble(),
   longitude: (json['longitude'] as num).toDouble(),
   compassDirection: (json['compassDirection'] as num).toDouble(),
@@ -22,6 +23,7 @@ Map<String, dynamic> _$PhotoToJson(Photo instance) => <String, dynamic>{
   'id': instance.id,
   'photoPointId': instance.photoPointId,
   'filePath': instance.filePath,
+  'assetId': instance.assetId,
   'latitude': instance.latitude,
   'longitude': instance.longitude,
   'compassDirection': instance.compassDirection,
