@@ -6,7 +6,7 @@ void main() {
   group('Photo', () {
     test('should create Photo with all fields', () {
       final takenAt = DateTime.now();
-      
+
       final photo = Photo(
         id: 'test-photo-id',
         photoPointId: 'test-photo-point-id',
@@ -75,7 +75,10 @@ void main() {
       expect(deserializedPhoto.filePath, originalPhoto.filePath);
       expect(deserializedPhoto.latitude, originalPhoto.latitude);
       expect(deserializedPhoto.longitude, originalPhoto.longitude);
-      expect(deserializedPhoto.compassDirection, originalPhoto.compassDirection);
+      expect(
+        deserializedPhoto.compassDirection,
+        originalPhoto.compassDirection,
+      );
       expect(deserializedPhoto.takenAt, originalPhoto.takenAt);
       expect(deserializedPhoto.isInitial, originalPhoto.isInitial);
     });
@@ -140,7 +143,7 @@ void main() {
 
     test('should validate file path format', () {
       final photo = TestData.createMockPhoto(filePath: '/test/path/photo.jpg');
-      
+
       expect(photo.filePath, contains('.jpg'));
       expect(photo.filePath, startsWith('/'));
     });
@@ -165,9 +168,11 @@ void main() {
 
     test('should handle different file extensions', () {
       final extensions = ['.jpg', '.jpeg', '.png', '.heic'];
-      
+
       for (final ext in extensions) {
-        final photo = TestData.createMockPhoto(filePath: '/test/path/photo$ext');
+        final photo = TestData.createMockPhoto(
+          filePath: '/test/path/photo$ext',
+        );
         expect(photo.filePath, endsWith(ext));
       }
     });
@@ -175,7 +180,7 @@ void main() {
     test('should validate photo point relationship', () {
       final photoPointId = 'test-photo-point-id';
       final photo = TestData.createMockPhoto(photoPointId: photoPointId);
-      
+
       expect(photo.photoPointId, photoPointId);
       expect(photo.photoPointId.isNotEmpty, true);
     });
@@ -183,7 +188,7 @@ void main() {
     test('should handle initial photo flag', () {
       final initialPhoto = TestData.createMockPhoto(isInitial: true);
       final followUpPhoto = TestData.createMockPhoto(isInitial: false);
-      
+
       expect(initialPhoto.isInitial, true);
       expect(followUpPhoto.isInitial, false);
     });
@@ -191,9 +196,12 @@ void main() {
     test('should handle photo timestamp', () {
       final now = DateTime.now();
       final photo = TestData.createMockPhoto(takenAt: now);
-      
+
       expect(photo.takenAt, now);
-      expect(photo.takenAt.isBefore(DateTime.now().add(Duration(seconds: 1))), true);
+      expect(
+        photo.takenAt.isBefore(DateTime.now().add(Duration(seconds: 1))),
+        true,
+      );
     });
 
     test('should validate photo metadata consistency', () {
@@ -202,7 +210,7 @@ void main() {
         longitude: -122.4194,
         compassDirection: 45.0,
       );
-      
+
       // If photo has location, it should have both lat and lng
       // Compass direction should be within valid range
       expect(photo.compassDirection >= 0 && photo.compassDirection < 360, true);

@@ -24,14 +24,18 @@ void main() {
       );
     }
 
-    testWidgets('should render with bottom navigation bar', (WidgetTester tester) async {
+    testWidgets('should render with bottom navigation bar', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget(child: const MainTabScreen()));
 
       expect(find.byType(BottomNavigationBar), findsOneWidget);
       expect(find.byType(IndexedStack), findsOneWidget);
     });
 
-    testWidgets('should have two tabs: List and Map', (WidgetTester tester) async {
+    testWidgets('should have two tabs: List and Map', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget(child: const MainTabScreen()));
 
       expect(find.text('List'), findsOneWidget);
@@ -40,24 +44,34 @@ void main() {
       expect(find.byIcon(Icons.map), findsOneWidget);
     });
 
-    testWidgets('should start with List tab selected', (WidgetTester tester) async {
+    testWidgets('should start with List tab selected', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget(child: const MainTabScreen()));
 
-      final bottomNavBar = tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final bottomNavBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(bottomNavBar.currentIndex, 0);
     });
 
-    testWidgets('should switch to Map tab when Map is tapped', (WidgetTester tester) async {
+    testWidgets('should switch to Map tab when Map is tapped', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget(child: const MainTabScreen()));
 
       await tester.tap(find.text('Map'));
       await tester.pump();
 
-      final bottomNavBar = tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final bottomNavBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(bottomNavBar.currentIndex, 1);
     });
 
-    testWidgets('should switch back to List tab when List is tapped', (WidgetTester tester) async {
+    testWidgets('should switch back to List tab when List is tapped', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget(child: const MainTabScreen()));
 
       // First switch to Map tab
@@ -68,14 +82,20 @@ void main() {
       await tester.tap(find.text('List'));
       await tester.pump();
 
-      final bottomNavBar = tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final bottomNavBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(bottomNavBar.currentIndex, 0);
     });
 
-    testWidgets('should maintain IndexedStack structure for performance', (WidgetTester tester) async {
+    testWidgets('should maintain IndexedStack structure for performance', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget(child: const MainTabScreen()));
 
-      final indexedStack = tester.widget<IndexedStack>(find.byType(IndexedStack));
+      final indexedStack = tester.widget<IndexedStack>(
+        find.byType(IndexedStack),
+      );
       expect(indexedStack.children.length, 2);
       expect(indexedStack.index, 0);
 
@@ -83,23 +103,30 @@ void main() {
       await tester.tap(find.text('Map'));
       await tester.pump();
 
-      final updatedIndexedStack = tester.widget<IndexedStack>(find.byType(IndexedStack));
+      final updatedIndexedStack = tester.widget<IndexedStack>(
+        find.byType(IndexedStack),
+      );
       expect(updatedIndexedStack.index, 1);
     });
 
-    testWidgets('should contain PhotoPointsListScreen and PhotoPointsMapScreen', (WidgetTester tester) async {
-      await tester.pumpWidget(createTestWidget(child: const MainTabScreen()));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'should contain PhotoPointsListScreen and PhotoPointsMapScreen',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(createTestWidget(child: const MainTabScreen()));
+        await tester.pumpAndSettle();
 
-      // Verify that both screen types are in the IndexedStack children
-      final indexedStack = tester.widget<IndexedStack>(find.byType(IndexedStack));
-      expect(indexedStack.children.length, 2);
-      
-      // The first child should be PhotoPointsListScreen
-      expect(indexedStack.children[0], isA<PhotoPointsListScreen>());
-      
-      // The second child should be PhotoPointsMapScreen  
-      expect(indexedStack.children[1], isA<PhotoPointsMapScreen>());
-    });
+        // Verify that both screen types are in the IndexedStack children
+        final indexedStack = tester.widget<IndexedStack>(
+          find.byType(IndexedStack),
+        );
+        expect(indexedStack.children.length, 2);
+
+        // The first child should be PhotoPointsListScreen
+        expect(indexedStack.children[0], isA<PhotoPointsListScreen>());
+
+        // The second child should be PhotoPointsMapScreen
+        expect(indexedStack.children[1], isA<PhotoPointsMapScreen>());
+      },
+    );
   });
 }

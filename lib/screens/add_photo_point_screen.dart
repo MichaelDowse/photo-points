@@ -21,9 +21,9 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
   final _nameController = TextEditingController();
   final _notesController = TextEditingController();
   final _uuid = const Uuid();
-  
+
   final PhotoService _photoService = PhotoService();
-  
+
   String? _capturedPhotoPath;
   double? _latitude;
   double? _longitude;
@@ -33,10 +33,11 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
   bool _isSelectingFromLibrary = false;
   bool _isFromLibrary = false;
 
-  bool get _canSave => _capturedPhotoPath != null && 
-                      _nameController.text.trim().isNotEmpty &&
-                      !_isCapturing && 
-                      !_isSelectingFromLibrary;
+  bool get _canSave =>
+      _capturedPhotoPath != null &&
+      _nameController.text.trim().isNotEmpty &&
+      !_isCapturing &&
+      !_isSelectingFromLibrary;
 
   @override
   void initState() {
@@ -68,18 +69,20 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
                 backgroundColor: _canSave ? Colors.orange : Colors.grey[400],
                 foregroundColor: Colors.white,
                 elevation: 4,
-                shadowColor: _canSave ? Colors.orange.withValues(alpha: 0.4) : Colors.grey.withValues(alpha: 0.2),
+                shadowColor: _canSave
+                    ? Colors.orange.withValues(alpha: 0.4)
+                    : Colors.grey.withValues(alpha: 0.2),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
               ),
               child: const Text(
                 'Save',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
           ),
@@ -100,7 +103,9 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
             _buildLocationSection(),
             const SizedBox(height: 24),
             _buildFormSection(),
-            const SizedBox(height: 48), // Extra bottom padding for better scrolling
+            const SizedBox(
+              height: 48,
+            ), // Extra bottom padding for better scrolling
           ],
         ),
       ),
@@ -114,10 +119,7 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Photo',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
+            Text('Photo', style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 16),
             if (_capturedPhotoPath != null)
               _buildPhotoPreview()
@@ -149,7 +151,9 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
           children: [
             TextButton.icon(
               onPressed: _isFromLibrary ? _selectFromLibrary : _retakePhoto,
-              icon: Icon(_isFromLibrary ? Icons.photo_library : Icons.camera_alt),
+              icon: Icon(
+                _isFromLibrary ? Icons.photo_library : Icons.camera_alt,
+              ),
               label: Text(_isFromLibrary ? 'Reselect' : 'Retake'),
             ),
             TextButton.icon(
@@ -184,7 +188,9 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
                 Icon(
                   Icons.photo,
                   size: 64,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.4),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -199,7 +205,9 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: _isCapturing || _isSelectingFromLibrary ? null : _capturePhoto,
+                  onPressed: _isCapturing || _isSelectingFromLibrary
+                      ? null
+                      : _capturePhoto,
                   icon: _isCapturing
                       ? const SizedBox(
                           width: 20,
@@ -213,7 +221,9 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
               const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: _isCapturing || _isSelectingFromLibrary ? null : _selectFromLibrary,
+                  onPressed: _isCapturing || _isSelectingFromLibrary
+                      ? null
+                      : _selectFromLibrary,
                   icon: _isSelectingFromLibrary
                       ? const SizedBox(
                           width: 20,
@@ -221,7 +231,9 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.photo_library),
-                  label: Text(_isSelectingFromLibrary ? 'Selecting...' : 'From Library'),
+                  label: Text(
+                    _isSelectingFromLibrary ? 'Selecting...' : 'From Library',
+                  ),
                 ),
               ),
             ],
@@ -276,11 +288,13 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
                     Icon(
                       Icons.location_off,
                       size: 48,
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.4),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _isFromLibrary 
+                      _isFromLibrary
                           ? 'Location will be extracted from photo metadata if available'
                           : 'Location will be recorded when you take the photo',
                       style: Theme.of(context).textTheme.bodyMedium,
@@ -298,25 +312,18 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
   Widget _buildLocationInfo(IconData icon, String title, String value) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              Text(title, style: Theme.of(context).textTheme.bodySmall),
               Text(
                 value,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -332,10 +339,7 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Details',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
+            Text('Details', style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 16),
             TextFormField(
               controller: _nameController,
@@ -374,10 +378,8 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
       final result = await Navigator.push<Map<String, dynamic>>(
         context,
         MaterialPageRoute(
-          builder: (context) => CameraScreen(
-            photoPointId: _uuid.v4(),
-            isInitialPhoto: true,
-          ),
+          builder: (context) =>
+              CameraScreen(photoPointId: _uuid.v4(), isInitialPhoto: true),
         ),
       );
 
@@ -430,14 +432,17 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
       final selectedImage = await _photoService.pickImageFromLibrary();
       if (selectedImage != null) {
         // Extract GPS coordinates from EXIF data
-        final gpsData = await _photoService.extractGpsFromImage(selectedImage.path);
-        
+        final gpsData = await _photoService.extractGpsFromImage(
+          selectedImage.path,
+        );
+
         setState(() {
           _capturedPhotoPath = selectedImage.path;
           _latitude = gpsData['latitude'];
           _longitude = gpsData['longitude'];
           _compassDirection = null; // Always null for library photos
-          _orientation = PhotoOrientation.portrait; // Default for library photos
+          _orientation =
+              PhotoOrientation.portrait; // Default for library photos
           _isFromLibrary = true;
         });
       }
@@ -472,11 +477,11 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
     try {
       final photoPointId = _uuid.v4();
       final photoId = _uuid.v4();
-      
+
       String? finalPhotoPath;
       String? assetId;
       DateTime photoTakenAt;
-      
+
       if (_isFromLibrary) {
         // Copy library photo to app storage (fallback) or save to Photos Library
         finalPhotoPath = await _photoService.copyLibraryPhotoToStorage(
@@ -484,15 +489,17 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
           photoPointId: photoPointId,
           photoId: photoId,
         );
-        
+
         // Try to extract original date from EXIF, fallback to now
-        final originalDate = await _photoService.extractDateTimeFromImage(_capturedPhotoPath!);
+        final originalDate = await _photoService.extractDateTimeFromImage(
+          _capturedPhotoPath!,
+        );
         photoTakenAt = originalDate ?? DateTime.now();
       } else {
         // Photo from camera - could be file path or asset ID
         String photoPath = _capturedPhotoPath!;
         bool isAssetId = !photoPath.contains('/') && !kIsWeb;
-        
+
         if (isAssetId) {
           assetId = photoPath;
         } else {
@@ -500,17 +507,18 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
         }
         photoTakenAt = DateTime.now();
       }
-      
+
       if (finalPhotoPath == null && assetId == null) {
         throw Exception('Failed to process photo');
       }
-      
+
       final photo = Photo(
         id: photoId,
         photoPointId: photoPointId,
         filePath: finalPhotoPath,
         assetId: assetId,
-        latitude: _latitude ?? 0.0, // Use 0.0 as fallback, will be updated later
+        latitude:
+            _latitude ?? 0.0, // Use 0.0 as fallback, will be updated later
         longitude: _longitude ?? 0.0,
         compassDirection: _compassDirection ?? 0.0,
         takenAt: photoTakenAt,
@@ -521,7 +529,9 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
       final photoPoint = PhotoPoint(
         id: photoPointId,
         name: _nameController.text.trim(),
-        notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+        notes: _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim(),
         latitude: _latitude,
         longitude: _longitude,
         compassDirection: _compassDirection,

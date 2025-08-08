@@ -13,7 +13,10 @@ void main() {
       final photoDate = DateTime(2023, 12, 25, 14, 30);
       const photoPointName = 'Forest Clearing';
 
-      final filename = photoService.generateShareFilename(photoPointName, photoDate);
+      final filename = photoService.generateShareFilename(
+        photoPointName,
+        photoDate,
+      );
 
       expect(filename, equals('Forest_Clearing_20231225'));
     });
@@ -22,7 +25,10 @@ void main() {
       final photoDate = DateTime(2023, 5, 15, 10, 0);
       const photoPointName = 'Trail <Head>/Path*';
 
-      final filename = photoService.generateShareFilename(photoPointName, photoDate);
+      final filename = photoService.generateShareFilename(
+        photoPointName,
+        photoDate,
+      );
 
       expect(filename, equals('Trail__Head__Path_20230515'));
     });
@@ -31,7 +37,10 @@ void main() {
       final photoDate = DateTime(2024, 1, 1, 0, 0);
       const photoPointName = 'Mountain   View    Lookout';
 
-      final filename = photoService.generateShareFilename(photoPointName, photoDate);
+      final filename = photoService.generateShareFilename(
+        photoPointName,
+        photoDate,
+      );
 
       expect(filename, equals('Mountain_View_Lookout_20240101'));
     });
@@ -40,7 +49,10 @@ void main() {
       final photoDate = DateTime(2023, 7, 4, 12, 0);
       const photoPointName = '   ';
 
-      final filename = photoService.generateShareFilename(photoPointName, photoDate);
+      final filename = photoService.generateShareFilename(
+        photoPointName,
+        photoDate,
+      );
 
       expect(filename, equals('photo_20230704'));
     });
@@ -49,18 +61,30 @@ void main() {
       final photoDate = DateTime(2023, 3, 7, 8, 15);
       const photoPointName = 'Point A';
 
-      final filename = photoService.generateShareFilename(photoPointName, photoDate);
+      final filename = photoService.generateShareFilename(
+        photoPointName,
+        photoDate,
+      );
 
       expect(filename, equals('Point_A_20230307'));
     });
 
     test('should handle long photo point names', () {
       final photoDate = DateTime(2023, 11, 22, 16, 45);
-      const photoPointName = 'Very Long Photo Point Name With Many Words That Should Be Sanitized';
+      const photoPointName =
+          'Very Long Photo Point Name With Many Words That Should Be Sanitized';
 
-      final filename = photoService.generateShareFilename(photoPointName, photoDate);
+      final filename = photoService.generateShareFilename(
+        photoPointName,
+        photoDate,
+      );
 
-      expect(filename, equals('Very_Long_Photo_Point_Name_With_Many_Words_That_Should_Be_Sanitized_20231122'));
+      expect(
+        filename,
+        equals(
+          'Very_Long_Photo_Point_Name_With_Many_Words_That_Should_Be_Sanitized_20231122',
+        ),
+      );
     });
   });
 }

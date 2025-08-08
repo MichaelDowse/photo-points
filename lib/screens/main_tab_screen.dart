@@ -18,14 +18,8 @@ class _MainTabScreenState extends State<MainTabScreen> {
   ];
 
   final List<BottomNavigationBarItem> _bottomNavItems = [
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.list),
-      label: 'List',
-    ),
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.map),
-      label: 'Map',
-    ),
+    const BottomNavigationBarItem(icon: Icon(Icons.list), label: 'List'),
+    const BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
   ];
 
   void _onTabTapped(int index) {
@@ -37,10 +31,7 @@ class _MainTabScreenState extends State<MainTabScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,

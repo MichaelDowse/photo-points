@@ -5,7 +5,7 @@ part 'photo.g.dart';
 enum PhotoOrientation {
   portrait,
   landscape;
-  
+
   String get displayName {
     switch (this) {
       case PhotoOrientation.portrait:

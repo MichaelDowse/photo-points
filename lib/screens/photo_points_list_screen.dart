@@ -24,17 +24,17 @@ class _PhotoPointsListScreenState extends State<PhotoPointsListScreen> {
 
   Future<void> _initializeApp() async {
     final appState = context.read<AppStateProvider>();
-    
+
     // Check permissions first
     await appState.checkPermissions();
-    
+
     // Show permissions dialog if not all granted
     if (!appState.permissions.values.every((granted) => granted)) {
       if (mounted) {
         await _showPermissionsDialog();
       }
     }
-    
+
     // Load photo points
     await appState.loadPhotoPoints();
   }
@@ -55,9 +55,7 @@ class _PhotoPointsListScreenState extends State<PhotoPointsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Photo Points'),
-      ),
+      appBar: AppBar(title: const Text('Photo Points')),
       body: Consumer<AppStateProvider>(
         builder: (context, appState, child) {
           if (appState.error != null) {
@@ -65,9 +63,7 @@ class _PhotoPointsListScreenState extends State<PhotoPointsListScreen> {
           }
 
           if (appState.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (appState.photoPoints.isEmpty) {
@@ -142,10 +138,7 @@ class _PhotoPointsListScreenState extends State<PhotoPointsListScreen> {
             color: Theme.of(context).colorScheme.error,
           ),
           const SizedBox(height: 24),
-          Text(
-            'Error',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
+          Text('Error', style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 12),
           Text(
             error,
@@ -169,9 +162,7 @@ class _PhotoPointsListScreenState extends State<PhotoPointsListScreen> {
   void _navigateToAddPhotoPoint() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const AddPhotoPointScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const AddPhotoPointScreen()),
     );
   }
 

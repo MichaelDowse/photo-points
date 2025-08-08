@@ -30,13 +30,13 @@ class MockAppStateProvider extends AppStateProvider {
 
   @override
   List<PhotoPoint> get photoPoints => _photoPoints;
-  
+
   @override
   bool get isLoading => _isLoading;
-  
+
   @override
   String? get error => _error;
-  
+
   @override
   Map<String, bool> get permissions => _permissions;
 

@@ -33,7 +33,7 @@ void main() {
 
       // Verify photo point name is displayed
       expect(find.text('Test Photo Point'), findsOneWidget);
-      
+
       // Verify notes are displayed (if they exist)
       if (testPhotoPoint.notes != null) {
         expect(find.text('Test notes'), findsOneWidget);
@@ -62,7 +62,9 @@ void main() {
       expect(wasCallbackCalled, true);
     });
 
-    testWidgets('should display location information when available', (tester) async {
+    testWidgets('should display location information when available', (
+      tester,
+    ) async {
       final photoPointWithLocation = TestData.createMockPhotoPoint(
         name: 'Located Point',
         latitude: 37.7749,
@@ -83,13 +85,15 @@ void main() {
 
       // Verify location information is displayed
       expect(find.text('Located Point'), findsOneWidget);
-      
+
       // The widget might display coordinates or compass direction
       // This depends on the actual implementation
       expect(find.byType(PhotoPointCard), findsOneWidget);
     });
 
-    testWidgets('should handle photo point without location data', (tester) async {
+    testWidgets('should handle photo point without location data', (
+      tester,
+    ) async {
       final photoPointWithoutLocation = TestData.createMockPhotoPoint(
         name: 'No Location Point',
         latitude: null,
@@ -168,10 +172,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: PhotoPointCard(
-              photoPoint: photoPointWithDate,
-              onTap: () {},
-            ),
+            body: PhotoPointCard(photoPoint: photoPointWithDate, onTap: () {}),
           ),
         ),
       );
@@ -185,10 +186,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: PhotoPointCard(
-              photoPoint: testPhotoPoint,
-              onTap: () {},
-            ),
+            body: PhotoPointCard(photoPoint: testPhotoPoint, onTap: () {}),
           ),
         ),
       );
@@ -204,17 +202,14 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: PhotoPointCard(
-              photoPoint: testPhotoPoint,
-              onTap: () {},
-            ),
+            body: PhotoPointCard(photoPoint: testPhotoPoint, onTap: () {}),
           ),
         ),
       );
 
       // Verify accessibility
       expect(find.byType(InkWell), findsOneWidget);
-      
+
       // The card should be tappable
       final inkWell = tester.widget<InkWell>(find.byType(InkWell));
       expect(inkWell.onTap, isNotNull);
@@ -222,17 +217,16 @@ void main() {
 
     testWidgets('should handle long text gracefully', (tester) async {
       final longTextPhotoPoint = TestData.createMockPhotoPoint(
-        name: 'This is a very long photo point name that should be handled gracefully by the widget',
-        notes: 'This is a very long notes section that contains lots of text and should be displayed properly without breaking the layout or causing any overflow issues',
+        name:
+            'This is a very long photo point name that should be handled gracefully by the widget',
+        notes:
+            'This is a very long notes section that contains lots of text and should be displayed properly without breaking the layout or causing any overflow issues',
       );
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: PhotoPointCard(
-              photoPoint: longTextPhotoPoint,
-              onTap: () {},
-            ),
+            body: PhotoPointCard(photoPoint: longTextPhotoPoint, onTap: () {}),
           ),
         ),
       );

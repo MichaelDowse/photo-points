@@ -6,7 +6,7 @@ void main() {
   group('CompassData', () {
     test('should create CompassData with all fields', () {
       final timestamp = DateTime.now();
-      
+
       final compassData = CompassData(
         heading: 45.0,
         accuracy: 5.0,
@@ -65,21 +65,21 @@ void main() {
 
     test('should validate heading ranges', () {
       final validHeadings = [0.0, 45.0, 90.0, 180.0, 270.0, 359.9];
-      
+
       for (final heading in validHeadings) {
         final compassData = CompassData(
           heading: heading,
           accuracy: 5.0,
           timestamp: DateTime.now(),
         );
-        
+
         expect(compassData.heading >= 0 && compassData.heading < 360, true);
       }
     });
 
     test('should validate accuracy values', () {
       final compassData = TestData.createMockCompassData(accuracy: 5.0);
-      
+
       expect(compassData.accuracy, 5.0);
       expect(compassData.accuracy >= 0, true); // Accuracy should be positive
     });
@@ -107,9 +107,14 @@ void main() {
     test('should handle timestamp validation', () {
       final now = DateTime.now();
       final compassData = TestData.createMockCompassData(timestamp: now);
-      
+
       expect(compassData.timestamp, now);
-      expect(compassData.timestamp.isBefore(DateTime.now().add(Duration(seconds: 1))), true);
+      expect(
+        compassData.timestamp.isBefore(
+          DateTime.now().add(Duration(seconds: 1)),
+        ),
+        true,
+      );
     });
 
     test('should handle precision of heading', () {
@@ -118,14 +123,14 @@ void main() {
         accuracy: 1.0,
         timestamp: DateTime.now(),
       );
-      
+
       expect(highPrecisionCompass.heading, closeTo(45.123456, 0.000001));
     });
 
     test('should calculate heading difference', () {
       final compass1 = TestData.createMockCompassData(heading: 45.0);
       final compass2 = TestData.createMockCompassData(heading: 135.0);
-      
+
       // Test heading difference calculation
       final diff = (compass2.heading - compass1.heading).abs();
       expect(diff, 90.0);
@@ -134,14 +139,14 @@ void main() {
     test('should handle heading normalization', () {
       // Test that headings are within valid range
       final testHeadings = [0.0, 45.0, 90.0, 180.0, 270.0, 359.9];
-      
+
       for (final heading in testHeadings) {
         final compassData = CompassData(
           heading: heading,
           accuracy: 5.0,
           timestamp: DateTime.now(),
         );
-        
+
         expect(compassData.heading >= 0, true);
         expect(compassData.heading < 360, true);
       }
@@ -165,14 +170,14 @@ void main() {
           accuracy: 5.0,
           timestamp: DateTime.now(),
         );
-        
+
         // Test cardinal direction conversion
         String getCardinalDirection(double heading) {
           const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
           int index = ((heading + 22.5) / 45).floor() % 8;
           return directions[index];
         }
-        
+
         expect(getCardinalDirection(compassData.heading), reading['expected']);
       }
     });
@@ -191,25 +196,25 @@ void main() {
           accuracy: level['accuracy'] as double,
           timestamp: DateTime.now(),
         );
-        
+
         String getQualityLevel(double accuracy) {
           if (accuracy < 5.0) return 'excellent';
           if (accuracy < 10.0) return 'good';
           if (accuracy < 20.0) return 'fair';
           return 'poor';
         }
-        
+
         expect(getQualityLevel(compassData.accuracy), level['quality']);
       }
     });
 
     test('should handle compass calibration status', () {
       final compassData = TestData.createMockCompassData(accuracy: 5.0);
-      
+
       // Test calibration status based on accuracy
       final isWellCalibrated = compassData.accuracy < 10.0;
       final needsCalibration = compassData.accuracy > 20.0;
-      
+
       expect(isWellCalibrated, true);
       expect(needsCalibration, false);
     });

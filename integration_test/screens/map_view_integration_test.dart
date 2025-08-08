@@ -23,7 +23,7 @@ void main() {
       // Verify List tab is initially selected
       expect(find.text('List'), findsOneWidget);
       expect(find.text('Map'), findsOneWidget);
-      
+
       // Verify List screen is shown
       expect(find.byType(PhotoPointsListScreen), findsOneWidget);
       expect(find.text('PhotoPoints'), findsOneWidget);
@@ -50,21 +50,26 @@ void main() {
       expect(find.text('PhotoPoints'), findsOneWidget);
     });
 
-    testWidgets('Map view shows empty state when no photo points have coordinates', (WidgetTester tester) async {
-      await tester.pumpWidget(const PhotoPointsApp());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'Map view shows empty state when no photo points have coordinates',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(const PhotoPointsApp());
+        await tester.pumpAndSettle();
 
-      // Switch to Map tab
-      await tester.tap(find.text('Map'));
-      await tester.pumpAndSettle();
+        // Switch to Map tab
+        await tester.tap(find.text('Map'));
+        await tester.pumpAndSettle();
 
-      // If no photo points exist or none have coordinates, should show empty state
-      // The exact behavior depends on the current state of the app
-      expect(find.byType(PhotoPointsMapScreen), findsOneWidget);
-      expect(find.text('Photo Points Map'), findsOneWidget);
-    });
+        // If no photo points exist or none have coordinates, should show empty state
+        // The exact behavior depends on the current state of the app
+        expect(find.byType(PhotoPointsMapScreen), findsOneWidget);
+        expect(find.text('Photo Points Map'), findsOneWidget);
+      },
+    );
 
-    testWidgets('Floating action button navigation works from both tabs', (WidgetTester tester) async {
+    testWidgets('Floating action button navigation works from both tabs', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const PhotoPointsApp());
       await tester.pumpAndSettle();
 
@@ -93,7 +98,9 @@ void main() {
       expect(find.text('Add Photo Point'), findsOneWidget);
     });
 
-    testWidgets('Map view handles permissions correctly', (WidgetTester tester) async {
+    testWidgets('Map view handles permissions correctly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const PhotoPointsApp());
       await tester.pumpAndSettle();
 
@@ -106,7 +113,9 @@ void main() {
       expect(find.byIcon(Icons.my_location), findsOneWidget);
     });
 
-    testWidgets('Tab state is preserved during navigation', (WidgetTester tester) async {
+    testWidgets('Tab state is preserved during navigation', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const PhotoPointsApp());
       await tester.pumpAndSettle();
 
@@ -115,7 +124,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify Map tab is selected
-      final bottomNavBar = tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final bottomNavBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(bottomNavBar.currentIndex, 1);
 
       // Navigate to Add Photo Point
@@ -127,12 +138,16 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify Map tab is still selected
-      final updatedBottomNavBar = tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final updatedBottomNavBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(updatedBottomNavBar.currentIndex, 1);
       expect(find.byType(PhotoPointsMapScreen), findsOneWidget);
     });
 
-    testWidgets('Map components are properly initialized', (WidgetTester tester) async {
+    testWidgets('Map components are properly initialized', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const PhotoPointsApp());
       await tester.pumpAndSettle();
 
@@ -148,7 +163,9 @@ void main() {
       expect(find.text('Photo Points Map'), findsOneWidget);
     });
 
-    testWidgets('My location button is functional', (WidgetTester tester) async {
+    testWidgets('My location button is functional', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const PhotoPointsApp());
       await tester.pumpAndSettle();
 
@@ -172,7 +189,7 @@ void main() {
       for (int i = 0; i < 5; i++) {
         await tester.tap(find.text('Map'));
         await tester.pump(const Duration(milliseconds: 100));
-        
+
         await tester.tap(find.text('List'));
         await tester.pump(const Duration(milliseconds: 100));
       }
@@ -184,7 +201,9 @@ void main() {
       expect(find.text('PhotoPoints'), findsOneWidget);
     });
 
-    testWidgets('IndexedStack preserves state between tab switches', (WidgetTester tester) async {
+    testWidgets('IndexedStack preserves state between tab switches', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const PhotoPointsApp());
       await tester.pumpAndSettle();
 

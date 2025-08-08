@@ -14,10 +14,7 @@ import 'camera_screen.dart';
 class ShowPhotoPointScreen extends StatefulWidget {
   final String photoPointId;
 
-  const ShowPhotoPointScreen({
-    super.key,
-    required this.photoPointId,
-  });
+  const ShowPhotoPointScreen({super.key, required this.photoPointId});
 
   @override
   State<ShowPhotoPointScreen> createState() => _ShowPhotoPointScreenState();
@@ -32,13 +29,11 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
     return Consumer<AppStateProvider>(
       builder: (context, appState, child) {
         final photoPoint = appState.getPhotoPointById(widget.photoPointId);
-        
+
         if (photoPoint == null) {
           return Scaffold(
             appBar: AppBar(title: const Text('Photo Point Not Found')),
-            body: const Center(
-              child: Text('Photo point not found'),
-            ),
+            body: const Center(child: Text('Photo point not found')),
           );
         }
 
@@ -53,7 +48,10 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
                     value: 'share',
                     child: Row(
                       children: [
-                        Icon(Icons.share, color: Theme.of(context).colorScheme.primary),
+                        Icon(
+                          Icons.share,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                         const SizedBox(width: 8),
                         const Text('Share Photo Point'),
                       ],
@@ -63,7 +61,10 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
                     value: 'share_with_watermark',
                     child: Row(
                       children: [
-                        Icon(Icons.water_drop, color: Theme.of(context).colorScheme.primary),
+                        Icon(
+                          Icons.water_drop,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                         const SizedBox(width: 8),
                         const Text('Share with Watermark'),
                       ],
@@ -75,7 +76,10 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
                       children: [
                         Icon(Icons.delete, color: Colors.red),
                         SizedBox(width: 8),
-                        Text('Delete Photo Point', style: TextStyle(color: Colors.red)),
+                        Text(
+                          'Delete Photo Point',
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ],
                     ),
                   ),
@@ -109,10 +113,7 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Details',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
+            Text('Details', style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 16),
             _buildDetailRow(
               Icons.location_on,
@@ -136,10 +137,7 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
             ),
             if (photoPoint.notes != null && photoPoint.notes!.isNotEmpty) ...[
               const SizedBox(height: 16),
-              Text(
-                'Notes',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+              Text('Notes', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               Text(
                 photoPoint.notes!,
@@ -160,25 +158,18 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
   ) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              Text(label, style: Theme.of(context).textTheme.bodySmall),
               Text(
                 value2 != null ? '$value1, $value2' : value1,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -298,7 +289,8 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
       context: context,
       builder: (context) => ConfirmationDialog(
         title: 'Delete Photo Point',
-        content: 'Are you sure you want to delete "${photoPoint.name}"? This action cannot be undone.',
+        content:
+            'Are you sure you want to delete "${photoPoint.name}"? This action cannot be undone.',
         confirmText: 'Delete',
         cancelText: 'Cancel',
         isDestructive: true,
@@ -352,11 +344,16 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
           compassDirection: result['compassDirection'],
           takenAt: DateTime.now(),
           isInitial: false,
-          orientation: result['orientation'] as PhotoOrientation? ?? PhotoOrientation.portrait,
+          orientation:
+              result['orientation'] as PhotoOrientation? ??
+              PhotoOrientation.portrait,
         );
 
         if (mounted) {
-          await context.read<AppStateProvider>().addPhotoToPoint(photoPoint.id, photo);
+          await context.read<AppStateProvider>().addPhotoToPoint(
+            photoPoint.id,
+            photo,
+          );
         }
       }
     } catch (e) {
@@ -422,13 +419,17 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
                                   'Initial Photo',
                                   style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -453,7 +454,8 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
       context: context,
       builder: (context) => ConfirmationDialog(
         title: 'Delete Photo',
-        content: 'Are you sure you want to delete this photo? This action cannot be undone.',
+        content:
+            'Are you sure you want to delete this photo? This action cannot be undone.',
         confirmText: 'Delete',
         cancelText: 'Cancel',
         isDestructive: true,
@@ -462,7 +464,10 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
 
     if (confirmed == true && mounted) {
       try {
-        await context.read<AppStateProvider>().deletePhoto(photo.id, photo.filePath ?? '');
+        await context.read<AppStateProvider>().deletePhoto(
+          photo.id,
+          photo.filePath ?? '',
+        );
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -478,11 +483,15 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
 
   Future<void> _sharePhoto(Photo photo) async {
     try {
-      final photoPoint = context.read<AppStateProvider>().getPhotoPointById(widget.photoPointId);
+      final photoPoint = context.read<AppStateProvider>().getPhotoPointById(
+        widget.photoPointId,
+      );
       if (photo.filePath != null) {
-        await _photoService.sharePhoto(photo.filePath!, 
-            photoData: photo, 
-            photoPointName: photoPoint?.name);
+        await _photoService.sharePhoto(
+          photo.filePath!,
+          photoData: photo,
+          photoPointName: photoPoint?.name,
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -498,12 +507,16 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
 
   Future<void> _sharePhotoWithWatermark(Photo photo) async {
     try {
-      final photoPoint = context.read<AppStateProvider>().getPhotoPointById(widget.photoPointId);
+      final photoPoint = context.read<AppStateProvider>().getPhotoPointById(
+        widget.photoPointId,
+      );
       if (photo.filePath != null) {
-        await _photoService.sharePhoto(photo.filePath!, 
-            withWatermark: true, 
-            photoData: photo, 
-            photoPointName: photoPoint?.name);
+        await _photoService.sharePhoto(
+          photo.filePath!,
+          withWatermark: true,
+          photoData: photo,
+          photoPointName: photoPoint?.name,
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -541,9 +554,7 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
           return Container(
             height: 200,
             color: Theme.of(context).colorScheme.surface,
-            child: const Center(
-              child: Icon(Icons.broken_image, size: 64),
-            ),
+            child: const Center(child: Icon(Icons.broken_image, size: 64)),
           );
         },
       );
@@ -557,9 +568,7 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
           : Container(
               height: 200,
               color: Theme.of(context).colorScheme.surface,
-              child: const Center(
-                child: Icon(Icons.broken_image, size: 64),
-              ),
+              child: const Center(child: Icon(Icons.broken_image, size: 64)),
             );
     }
   }

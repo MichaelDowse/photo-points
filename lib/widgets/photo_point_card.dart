@@ -44,14 +44,17 @@ class PhotoPointCard extends StatelessWidget {
                     ),
                   ),
                   if (photoPoint.initialPhoto?.filePath != null)
-                    _buildThumbnail(context, photoPoint.initialPhoto!.filePath!),
+                    _buildThumbnail(
+                      context,
+                      photoPoint.initialPhoto!.filePath!,
+                    ),
                 ],
               ),
               const SizedBox(height: 12),
               _buildInfoRow(
                 context,
                 photoPoint.hasLocation ? Icons.location_on : Icons.location_off,
-                photoPoint.hasLocation 
+                photoPoint.hasLocation
                     ? '${photoPoint.latitude!.toStringAsFixed(6)}, ${photoPoint.longitude!.toStringAsFixed(6)}'
                     : 'Location not available',
                 null,
@@ -59,7 +62,9 @@ class PhotoPointCard extends StatelessWidget {
               const SizedBox(height: 8),
               _buildInfoRow(
                 context,
-                photoPoint.hasCompassDirection ? Icons.explore : Icons.explore_off,
+                photoPoint.hasCompassDirection
+                    ? Icons.explore
+                    : Icons.explore_off,
                 photoPoint.compassDisplayText ?? 'Direction not available',
                 null,
               ),
@@ -128,11 +133,7 @@ class PhotoPointCard extends StatelessWidget {
   ) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        Icon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
         const SizedBox(width: 8),
         Expanded(
           child: Text(

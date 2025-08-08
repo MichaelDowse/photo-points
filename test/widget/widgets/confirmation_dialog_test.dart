@@ -16,7 +16,7 @@ void main() {
                     builder: (context) => const ConfirmationDialog(
                       title: 'Test Title',
                       content: 'Test Message',
-                                          ),
+                    ),
                   );
                 },
                 child: const Text('Show Dialog'),
@@ -36,7 +36,9 @@ void main() {
       expect(find.text('Test Message'), findsOneWidget);
     });
 
-    testWidgets('should close dialog when confirm button is tapped', (tester) async {
+    testWidgets('should close dialog when confirm button is tapped', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -74,7 +76,9 @@ void main() {
       expect(find.byType(ConfirmationDialog), findsNothing);
     });
 
-    testWidgets('should close dialog when cancel button is tapped', (tester) async {
+    testWidgets('should close dialog when cancel button is tapped', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -86,7 +90,7 @@ void main() {
                     builder: (context) => const ConfirmationDialog(
                       title: 'Test Title',
                       content: 'Test Message',
-                                          ),
+                    ),
                   );
                 },
                 child: const Text('Show Dialog'),
@@ -126,7 +130,7 @@ void main() {
                       content: 'Test Message',
                       confirmText: 'Delete',
                       cancelText: 'Keep',
-                                          ),
+                    ),
                   );
                 },
                 child: const Text('Show Dialog'),
@@ -159,7 +163,7 @@ void main() {
                       content: 'This action cannot be undone.',
                       confirmText: 'Delete',
                       isDestructive: true,
-                                          ),
+                    ),
                   );
                 },
                 child: const Text('Show Dialog'),
@@ -191,7 +195,7 @@ void main() {
                     builder: (context) => const ConfirmationDialog(
                       title: 'Test Title',
                       content: 'Test Message',
-                                          ),
+                    ),
                   );
                 },
                 child: const Text('Show Dialog'),
@@ -208,7 +212,10 @@ void main() {
       // Verify dialog structure for accessibility
       expect(find.byType(AlertDialog), findsOneWidget);
       expect(find.byType(TextButton), findsOneWidget); // Cancel button
-      expect(find.byType(ElevatedButton), findsAtLeastNWidgets(1)); // Confirm button (may include the Show Dialog button)
+      expect(
+        find.byType(ElevatedButton),
+        findsAtLeastNWidgets(1),
+      ); // Confirm button (may include the Show Dialog button)
     });
 
     testWidgets('should handle long text gracefully', (tester) async {
@@ -221,9 +228,11 @@ void main() {
                   showDialog(
                     context: context,
                     builder: (context) => const ConfirmationDialog(
-                      title: 'This is a very long title that should be handled gracefully',
-                      content: 'This is a very long message that contains lots of text and should be displayed properly without breaking the layout or causing any overflow issues in the confirmation dialog.',
-                                          ),
+                      title:
+                          'This is a very long title that should be handled gracefully',
+                      content:
+                          'This is a very long message that contains lots of text and should be displayed properly without breaking the layout or causing any overflow issues in the confirmation dialog.',
+                    ),
                   );
                 },
                 child: const Text('Show Dialog'),

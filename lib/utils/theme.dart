@@ -6,14 +6,14 @@ class AppTheme {
   static const Color darkGreen = Color(0xFF1B5E20);
   static const Color accentGreen = Color(0xFF66BB6A);
   static const Color surfaceGreen = Color(0xFFE8F5E8);
-  
+
   static const Color backgroundLight = Color(0xFFF1F8E9);
   static const Color backgroundDark = Color(0xFF1C1C1C);
-  
+
   static const Color textPrimary = Color(0xFF1B5E20);
   static const Color textSecondary = Color(0xFF388E3C);
   static const Color textLight = Color(0xFFFFFFFF);
-  
+
   static const Color error = Color(0xFFD32F2F);
   static const Color warning = Color(0xFFF57C00);
   static const Color info = Color(0xFF1976D2);
@@ -59,9 +59,7 @@ class AppTheme {
         backgroundColor: primaryGreen,
         foregroundColor: textLight,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
@@ -71,9 +69,7 @@ class AppTheme {
     cardTheme: CardThemeData(
       color: Colors.white,
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -108,29 +104,13 @@ class AppTheme {
         fontSize: 20,
         fontWeight: FontWeight.w500,
       ),
-      bodyLarge: TextStyle(
-        color: textPrimary,
-        fontSize: 16,
-      ),
-      bodyMedium: TextStyle(
-        color: textPrimary,
-        fontSize: 14,
-      ),
-      bodySmall: TextStyle(
-        color: textSecondary,
-        fontSize: 12,
-      ),
+      bodyLarge: TextStyle(color: textPrimary, fontSize: 16),
+      bodyMedium: TextStyle(color: textPrimary, fontSize: 14),
+      bodySmall: TextStyle(color: textSecondary, fontSize: 12),
     ),
-    iconTheme: const IconThemeData(
-      color: primaryGreen,
-    ),
-    listTileTheme: const ListTileThemeData(
-      iconColor: primaryGreen,
-    ),
-    dividerTheme: const DividerThemeData(
-      color: lightGreen,
-      thickness: 1,
-    ),
+    iconTheme: const IconThemeData(color: primaryGreen),
+    listTileTheme: const ListTileThemeData(iconColor: primaryGreen),
+    dividerTheme: const DividerThemeData(color: lightGreen, thickness: 1),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -173,9 +153,7 @@ class AppTheme {
         backgroundColor: lightGreen,
         foregroundColor: textLight,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
@@ -185,9 +163,7 @@ class AppTheme {
     cardTheme: CardThemeData(
       color: const Color(0xFF2C2C2C),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -222,28 +198,12 @@ class AppTheme {
         fontSize: 20,
         fontWeight: FontWeight.w500,
       ),
-      bodyLarge: TextStyle(
-        color: textLight,
-        fontSize: 16,
-      ),
-      bodyMedium: TextStyle(
-        color: textLight,
-        fontSize: 14,
-      ),
-      bodySmall: TextStyle(
-        color: accentGreen,
-        fontSize: 12,
-      ),
+      bodyLarge: TextStyle(color: textLight, fontSize: 16),
+      bodyMedium: TextStyle(color: textLight, fontSize: 14),
+      bodySmall: TextStyle(color: accentGreen, fontSize: 12),
     ),
-    iconTheme: const IconThemeData(
-      color: lightGreen,
-    ),
-    listTileTheme: const ListTileThemeData(
-      iconColor: lightGreen,
-    ),
-    dividerTheme: const DividerThemeData(
-      color: lightGreen,
-      thickness: 1,
-    ),
+    iconTheme: const IconThemeData(color: lightGreen),
+    listTileTheme: const ListTileThemeData(iconColor: lightGreen),
+    dividerTheme: const DividerThemeData(color: lightGreen, thickness: 1),
   );
 }

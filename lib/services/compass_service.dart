@@ -51,7 +51,7 @@ class CompassService {
 
       // Start the stream if not already running to ensure we use the same source
       getCompassStream();
-      
+
       // Wait for the next compass reading from the SAME stream that navigation uses
       final compassData = await _compassController!.stream.first;
       return compassData;
@@ -63,18 +63,20 @@ class CompassService {
 
   Stream<CompassData> getCompassStream() {
     _compassController ??= StreamController<CompassData>.broadcast();
-    
-    _compassSubscription ??= FlutterCompass.events?.listen((CompassEvent event) {
-        if (event.heading != null) {
-          final compassData = CompassData(
-            heading: event.heading!,
-            accuracy: event.accuracy ?? 0.0,
-            timestamp: DateTime.now(),
-          );
-          _compassController?.add(compassData);
-        }
-      });
-    
+
+    _compassSubscription ??= FlutterCompass.events?.listen((
+      CompassEvent event,
+    ) {
+      if (event.heading != null) {
+        final compassData = CompassData(
+          heading: event.heading!,
+          accuracy: event.accuracy ?? 0.0,
+          timestamp: DateTime.now(),
+        );
+        _compassController?.add(compassData);
+      }
+    });
+
     return _compassController!.stream;
   }
 
@@ -85,7 +87,10 @@ class CompassService {
     _compassController = null;
   }
 
-  double calculateHeadingDifference(double currentHeading, double targetHeading) {
+  double calculateHeadingDifference(
+    double currentHeading,
+    double targetHeading,
+  ) {
     double diff = (targetHeading - currentHeading).abs();
     return diff > 180 ? 360 - diff : diff;
   }
@@ -93,18 +98,18 @@ class CompassService {
   String getDirectionInstruction(double currentHeading, double targetHeading) {
     double normalizedCurrent = currentHeading % 360;
     double normalizedTarget = targetHeading % 360;
-    
+
     if (normalizedCurrent < 0) normalizedCurrent += 360;
     if (normalizedTarget < 0) normalizedTarget += 360;
-    
+
     double diff = normalizedTarget - normalizedCurrent;
-    
+
     if (diff > 180) {
       diff -= 360;
     } else if (diff < -180) {
       diff += 360;
     }
-    
+
     if (diff.abs() <= 1) {
       return 'Aligned';
     } else if (diff > 0) {
@@ -114,8 +119,13 @@ class CompassService {
     }
   }
 
-  bool isAligned(double currentHeading, double targetHeading, {double tolerance = 1.0}) {
-    return calculateHeadingDifference(currentHeading, targetHeading) <= tolerance;
+  bool isAligned(
+    double currentHeading,
+    double targetHeading, {
+    double tolerance = 1.0,
+  }) {
+    return calculateHeadingDifference(currentHeading, targetHeading) <=
+        tolerance;
   }
 
   String getCompassAccuracyText(double accuracy) {

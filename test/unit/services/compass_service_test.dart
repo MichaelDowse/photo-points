@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../test_data.dart';
 
 void main() {
-
   group('CompassService', () {
     test('should create valid compass data', () {
       final compassData = TestData.createMockCompassData(
@@ -28,7 +27,7 @@ void main() {
       for (final testCase in testCases) {
         final input = testCase['input'] as double;
         final expected = testCase['expected'] as double;
-        
+
         // This would test a normalize function if it exists
         final normalized = (input % 360 + 360) % 360;
         expect(normalized, expected);
@@ -50,21 +49,21 @@ void main() {
       for (final testCase in testCases) {
         final degrees = testCase['degrees'] as double;
         final expected = testCase['expected'] as String;
-        
+
         // This would test a cardinal direction converter if it exists
         String getCardinalDirection(double degrees) {
           const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
           int index = ((degrees + 22.5) / 45).floor() % 8;
           return directions[index];
         }
-        
+
         expect(getCardinalDirection(degrees), expected);
       }
     });
 
     test('should handle compass calibration status', () {
       final compassData = TestData.createMockCompassData(accuracy: 5.0);
-      
+
       // Test calibration status based on accuracy
       final isWellCalibrated = compassData.accuracy < 10.0;
       expect(isWellCalibrated, true);
@@ -86,7 +85,7 @@ void main() {
         latitude: 37.7749,
         longitude: -122.4194,
       );
-      
+
       final point2 = TestData.createMockLocationData(
         latitude: 37.7849,
         longitude: -122.4094,
@@ -99,7 +98,7 @@ void main() {
 
     test('should validate compass accuracy', () {
       final compassData = TestData.createMockCompassData(accuracy: 15.0);
-      
+
       // Test accuracy validation
       expect(compassData.accuracy, 15.0);
       final isAccurate = compassData.accuracy < 10.0;
@@ -116,7 +115,9 @@ void main() {
       ];
 
       // Test averaging or filtering
-      final average = readings.map((r) => r.heading).reduce((a, b) => a + b) / readings.length;
+      final average =
+          readings.map((r) => r.heading).reduce((a, b) => a + b) /
+          readings.length;
       expect(average, 45.125);
     });
   });

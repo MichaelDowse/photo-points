@@ -32,7 +32,7 @@ class CompassData {
   double differenceTo180(double otherHeading) {
     double otherNormalized = otherHeading % 360;
     if (otherNormalized < 0) otherNormalized += 360;
-    
+
     double diff = (otherNormalized - normalizedHeading).abs();
     return diff > 180 ? 360 - diff : diff;
   }

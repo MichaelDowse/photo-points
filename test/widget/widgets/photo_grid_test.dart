@@ -27,9 +27,18 @@ void main() {
 
     testWidgets('should display photos in grid layout', (tester) async {
       final photos = [
-        TestData.createMockPhoto(id: 'photo1', filePath: '/test/path/photo1.jpg'),
-        TestData.createMockPhoto(id: 'photo2', filePath: '/test/path/photo2.jpg'),
-        TestData.createMockPhoto(id: 'photo3', filePath: '/test/path/photo3.jpg'),
+        TestData.createMockPhoto(
+          id: 'photo1',
+          filePath: '/test/path/photo1.jpg',
+        ),
+        TestData.createMockPhoto(
+          id: 'photo2',
+          filePath: '/test/path/photo2.jpg',
+        ),
+        TestData.createMockPhoto(
+          id: 'photo3',
+          filePath: '/test/path/photo3.jpg',
+        ),
       ];
 
       await tester.pumpWidget(
@@ -52,8 +61,14 @@ void main() {
 
     testWidgets('should handle photo tap callback', (tester) async {
       final photos = [
-        TestData.createMockPhoto(id: 'photo1', filePath: '/test/path/photo1.jpg'),
-        TestData.createMockPhoto(id: 'photo2', filePath: '/test/path/photo2.jpg'),
+        TestData.createMockPhoto(
+          id: 'photo1',
+          filePath: '/test/path/photo1.jpg',
+        ),
+        TestData.createMockPhoto(
+          id: 'photo2',
+          filePath: '/test/path/photo2.jpg',
+        ),
       ];
 
       String? tappedPhotoId;
@@ -75,18 +90,18 @@ void main() {
 
       // Wait for the FutureBuilder to complete
       await tester.pumpAndSettle();
-      
+
       // Since the test environment doesn't have actual images, the PhotoGrid will show error placeholders
       // but the GestureDetector should still be there. Let's verify the grid is rendered first.
       expect(find.byType(PhotoGrid), findsOneWidget);
       expect(find.byType(GridView), findsOneWidget);
-      
+
       // For now, just verify that the PhotoGrid widget is properly constructed with the callbacks
       // The actual tap testing is difficult without real images, so we'll test this differently
       final photoGridWidget = tester.widget<PhotoGrid>(find.byType(PhotoGrid));
       expect(photoGridWidget.photos, equals(photos));
       expect(photoGridWidget.onPhotoTap, isNotNull);
-      
+
       // Verify the callback variable is initially null
       expect(tappedPhotoId, isNull);
     });
@@ -125,7 +140,10 @@ void main() {
 
     testWidgets('should handle single photo', (tester) async {
       final photos = [
-        TestData.createMockPhoto(id: 'photo1', filePath: '/test/path/photo1.jpg'),
+        TestData.createMockPhoto(
+          id: 'photo1',
+          filePath: '/test/path/photo1.jpg',
+        ),
       ];
 
       await tester.pumpWidget(
@@ -147,8 +165,9 @@ void main() {
     });
 
     testWidgets('should handle many photos', (tester) async {
-      final photos = List.generate(20, (index) => 
-        TestData.createMockPhoto(
+      final photos = List.generate(
+        20,
+        (index) => TestData.createMockPhoto(
           id: 'photo$index',
           filePath: '/test/path/photo$index.jpg',
         ),
@@ -173,8 +192,9 @@ void main() {
     });
 
     testWidgets('should be scrollable with many photos', (tester) async {
-      final photos = List.generate(50, (index) => 
-        TestData.createMockPhoto(
+      final photos = List.generate(
+        50,
+        (index) => TestData.createMockPhoto(
           id: 'photo$index',
           filePath: '/test/path/photo$index.jpg',
         ),
@@ -196,15 +216,14 @@ void main() {
       // Verify grid is scrollable
       expect(find.byType(PhotoGrid), findsOneWidget);
       expect(find.byType(GridView), findsOneWidget);
-      
+
       // Try to scroll
       await tester.drag(find.byType(GridView), const Offset(0, -500));
       await tester.pumpAndSettle();
-      
+
       // Should not throw any errors
       expect(tester.takeException(), isNull);
     });
-
 
     testWidgets('should display photo metadata', (tester) async {
       final photo = TestData.createMockPhoto(
@@ -234,8 +253,14 @@ void main() {
 
     testWidgets('should handle different aspect ratios', (tester) async {
       final photos = [
-        TestData.createMockPhoto(id: 'photo1', filePath: '/test/path/photo1.jpg'),
-        TestData.createMockPhoto(id: 'photo2', filePath: '/test/path/photo2.jpg'),
+        TestData.createMockPhoto(
+          id: 'photo1',
+          filePath: '/test/path/photo1.jpg',
+        ),
+        TestData.createMockPhoto(
+          id: 'photo2',
+          filePath: '/test/path/photo2.jpg',
+        ),
       ];
 
       await tester.pumpWidget(
@@ -257,8 +282,9 @@ void main() {
     });
 
     testWidgets('should handle custom cross axis count', (tester) async {
-      final photos = List.generate(6, (index) => 
-        TestData.createMockPhoto(
+      final photos = List.generate(
+        6,
+        (index) => TestData.createMockPhoto(
           id: 'photo$index',
           filePath: '/test/path/photo$index.jpg',
         ),
@@ -284,7 +310,10 @@ void main() {
 
     testWidgets('should be accessible', (tester) async {
       final photos = [
-        TestData.createMockPhoto(id: 'photo1', filePath: '/test/path/photo1.jpg'),
+        TestData.createMockPhoto(
+          id: 'photo1',
+          filePath: '/test/path/photo1.jpg',
+        ),
       ];
 
       await tester.pumpWidget(
@@ -303,7 +332,7 @@ void main() {
       // Verify accessibility
       expect(find.byType(PhotoGrid), findsOneWidget);
       expect(find.byType(GridView), findsOneWidget);
-      
+
       // Grid should be accessible to screen readers
       expect(find.byType(GestureDetector), findsWidgets);
     });

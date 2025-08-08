@@ -8,7 +8,6 @@ import '../../test_data.dart';
 class MockGeolocator extends Mock implements GeolocatorPlatform {}
 
 void main() {
-
   group('LocationService', () {
     test('should return current location data', () async {
       final mockPosition = Position(
@@ -59,7 +58,7 @@ void main() {
         latitude: 37.7749,
         longitude: -122.4194,
       );
-      
+
       final location2 = TestData.createMockLocationData(
         latitude: 37.7849,
         longitude: -122.4094,
@@ -72,7 +71,7 @@ void main() {
 
     test('should validate location data accuracy', () {
       final locationData = TestData.createMockLocationData(accuracy: 5.0);
-      
+
       // Test accuracy validation
       expect(locationData.accuracy, 5.0);
       expect(locationData.accuracy < 10.0, true); // Good accuracy
@@ -88,7 +87,7 @@ void main() {
         latitude: 37.7749295,
         longitude: -122.4194155,
       );
-      
+
       // Test coordinate formatting
       expect(locationData.latitude, closeTo(37.7749295, 0.0001));
       expect(locationData.longitude, closeTo(-122.4194155, 0.0001));

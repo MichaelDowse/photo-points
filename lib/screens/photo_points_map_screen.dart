@@ -19,14 +19,17 @@ class PhotoPointsMapScreen extends StatefulWidget {
 class _PhotoPointsMapScreenState extends State<PhotoPointsMapScreen> {
   final LocationService _locationService = LocationService();
   final MapController _mapController = MapController();
-  
+
   LocationData? _currentLocation;
   bool _isLoadingLocation = false;
   String? _locationError;
-  
+
   // Default center (will be updated when location is obtained)
-  LatLng _mapCenter = const LatLng(37.7749, -122.4194); // San Francisco as default
-  
+  LatLng _mapCenter = const LatLng(
+    37.7749,
+    -122.4194,
+  ); // San Francisco as default
+
   static const double _defaultZoom = 15.0;
   static const double _maxZoom = 18.0;
   static const double _minZoom = 3.0;
@@ -41,20 +44,20 @@ class _PhotoPointsMapScreenState extends State<PhotoPointsMapScreen> {
 
   Future<void> _initializeMap() async {
     final appState = context.read<AppStateProvider>();
-    
+
     // Check permissions first
     await appState.checkPermissions();
-    
+
     // Show permissions dialog if location permission not granted
     if (!(appState.permissions['location'] ?? false)) {
       if (mounted) {
         await _showPermissionsDialog();
       }
     }
-    
+
     // Load photo points
     await appState.loadPhotoPoints();
-    
+
     // Get current location
     await _getCurrentLocation();
   }
@@ -81,7 +84,7 @@ class _PhotoPointsMapScreenState extends State<PhotoPointsMapScreen> {
           _mapCenter = LatLng(location.latitude, location.longitude);
           _isLoadingLocation = false;
         });
-        
+
         // Move map to current location
         _mapController.move(_mapCenter, _defaultZoom);
       } else {
@@ -100,30 +103,27 @@ class _PhotoPointsMapScreenState extends State<PhotoPointsMapScreen> {
 
   List<PhotoPoint> _getPhotoPointsWithCoordinates() {
     final appState = context.read<AppStateProvider>();
-    return appState.photoPoints
-        .where((point) => point.hasLocation)
-        .toList();
+    return appState.photoPoints.where((point) => point.hasLocation).toList();
   }
 
   List<Marker> _buildMarkers() {
     final photoPointsWithCoordinates = _getPhotoPointsWithCoordinates();
-    
+
     List<Marker> markers = [];
-    
+
     // Add current location marker
     if (_currentLocation != null) {
       markers.add(
         Marker(
-          point: LatLng(_currentLocation!.latitude, _currentLocation!.longitude),
-          child: const Icon(
-            Icons.my_location,
-            color: Colors.blue,
-            size: 30,
+          point: LatLng(
+            _currentLocation!.latitude,
+            _currentLocation!.longitude,
           ),
+          child: const Icon(Icons.my_location, color: Colors.blue, size: 30),
         ),
       );
     }
-    
+
     // Add photo point markers
     for (final photoPoint in photoPointsWithCoordinates) {
       markers.add(
@@ -147,7 +147,7 @@ class _PhotoPointsMapScreenState extends State<PhotoPointsMapScreen> {
         ),
       );
     }
-    
+
     return markers;
   }
 
@@ -173,9 +173,7 @@ class _PhotoPointsMapScreenState extends State<PhotoPointsMapScreen> {
   void _navigateToAddPhotoPoint() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const AddPhotoPointScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const AddPhotoPointScreen()),
     );
   }
 
@@ -199,13 +197,11 @@ class _PhotoPointsMapScreenState extends State<PhotoPointsMapScreen> {
           }
 
           if (appState.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           final photoPointsWithCoordinates = _getPhotoPointsWithCoordinates();
-          
+
           return Stack(
             children: [
               FlutterMap(
@@ -218,15 +214,14 @@ class _PhotoPointsMapScreenState extends State<PhotoPointsMapScreen> {
                 ),
                 children: [
                   TileLayer(
-                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'com.example.photopoints',
                   ),
-                  MarkerLayer(
-                    markers: _buildMarkers(),
-                  ),
+                  MarkerLayer(markers: _buildMarkers()),
                 ],
               ),
-              
+
               // Loading indicator for location
               if (_isLoadingLocation)
                 const Positioned(
@@ -251,7 +246,7 @@ class _PhotoPointsMapScreenState extends State<PhotoPointsMapScreen> {
                     ),
                   ),
                 ),
-              
+
               // Location error
               if (_locationError != null)
                 Positioned(
@@ -266,27 +261,32 @@ class _PhotoPointsMapScreenState extends State<PhotoPointsMapScreen> {
                         children: [
                           Icon(
                             Icons.error,
-                            color: Theme.of(context).colorScheme.onErrorContainer,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onErrorContainer,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               _locationError!,
                               style: TextStyle(
-                                color: Theme.of(context).colorScheme.onErrorContainer,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onErrorContainer,
                               ),
                             ),
                           ),
                           IconButton(
                             icon: const Icon(Icons.close),
-                            onPressed: () => setState(() => _locationError = null),
+                            onPressed: () =>
+                                setState(() => _locationError = null),
                           ),
                         ],
                       ),
                     ),
                   ),
                 ),
-              
+
               // Empty state when no photo points with coordinates
               if (photoPointsWithCoordinates.isEmpty && !appState.isLoading)
                 Center(
@@ -300,7 +300,9 @@ class _PhotoPointsMapScreenState extends State<PhotoPointsMapScreen> {
                           Icon(
                             Icons.location_off,
                             size: 64,
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: 0.6),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -347,10 +349,7 @@ class _PhotoPointsMapScreenState extends State<PhotoPointsMapScreen> {
                 color: Theme.of(context).colorScheme.error,
               ),
               const SizedBox(height: 16),
-              Text(
-                'Error',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
+              Text('Error', style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: 8),
               Text(
                 error,

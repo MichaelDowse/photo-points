@@ -47,15 +47,15 @@ class _CameraScreenState extends State<CameraScreen> {
   bool _isInitialized = false;
   bool _isCapturing = false;
   bool _showOverlay = true;
-  
+
   LocationData? _currentLocation;
   CompassData? _currentCompass;
   PhotoOrientation? _currentOrientation;
-  
+
   StreamSubscription<LocationData>? _locationSubscription;
   StreamSubscription<CompassData>? _compassSubscription;
   Timer? _orientationTimer;
-  
+
   String? _error;
 
   @override
@@ -155,7 +155,9 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   void _startOrientationUpdates() {
-    _orientationTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+    _orientationTimer = Timer.periodic(const Duration(milliseconds: 500), (
+      timer,
+    ) {
       _updateCurrentOrientation();
     });
   }
@@ -206,29 +208,31 @@ class _CameraScreenState extends State<CameraScreen> {
           child: FittedBox(
             fit: BoxFit.cover,
             child: SizedBox(
-              width: _currentOrientation == PhotoOrientation.portrait 
-                ? (_controller!.value.previewSize?.height ?? 1)
-                : (_controller!.value.previewSize?.width ?? 1),
+              width: _currentOrientation == PhotoOrientation.portrait
+                  ? (_controller!.value.previewSize?.height ?? 1)
+                  : (_controller!.value.previewSize?.width ?? 1),
               height: _currentOrientation == PhotoOrientation.portrait
-                ? (_controller!.value.previewSize?.width ?? 1) 
-                : (_controller!.value.previewSize?.height ?? 1),
+                  ? (_controller!.value.previewSize?.width ?? 1)
+                  : (_controller!.value.previewSize?.height ?? 1),
               child: CameraPreview(_controller!),
             ),
           ),
         ),
-        
+
         // Photo overlay for subsequent photos
-        if (!widget.isInitialPhoto && _showOverlay && widget.initialPhotoPath != null)
+        if (!widget.isInitialPhoto &&
+            _showOverlay &&
+            widget.initialPhotoPath != null)
           Positioned.fill(
             child: FittedBox(
               fit: BoxFit.cover,
               child: SizedBox(
-                width: _currentOrientation == PhotoOrientation.portrait 
-                  ? (_controller!.value.previewSize?.height ?? 1)
-                  : (_controller!.value.previewSize?.width ?? 1),
+                width: _currentOrientation == PhotoOrientation.portrait
+                    ? (_controller!.value.previewSize?.height ?? 1)
+                    : (_controller!.value.previewSize?.width ?? 1),
                 height: _currentOrientation == PhotoOrientation.portrait
-                  ? (_controller!.value.previewSize?.width ?? 1) 
-                  : (_controller!.value.previewSize?.height ?? 1),
+                    ? (_controller!.value.previewSize?.width ?? 1)
+                    : (_controller!.value.previewSize?.height ?? 1),
                 child: CameraOverlay(
                   initialPhotoPath: widget.initialPhotoPath!,
                   opacity: 0.5,
@@ -236,7 +240,7 @@ class _CameraScreenState extends State<CameraScreen> {
               ),
             ),
           ),
-        
+
         // Navigation aids for subsequent photos
         if (!widget.isInitialPhoto)
           Positioned(
@@ -262,11 +266,7 @@ class _CameraScreenState extends State<CameraScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.error_outline,
-            color: Colors.white,
-            size: 64,
-          ),
+          const Icon(Icons.error_outline, color: Colors.white, size: 64),
           const SizedBox(height: 16),
           Text(
             _error!,
@@ -315,10 +315,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white,
-                        border: Border.all(
-                          color: Colors.grey[300]!,
-                          width: 3,
-                        ),
+                        border: Border.all(color: Colors.grey[300]!, width: 3),
                       ),
                       child: _isCapturing
                           ? const Center(
@@ -342,7 +339,6 @@ class _CameraScreenState extends State<CameraScreen> {
       ),
     );
   }
-
 
   Future<void> _capturePhoto() async {
     if (_controller == null || !_controller!.value.isInitialized) {
@@ -382,7 +378,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
       // Determine if this is a file path or asset ID
       bool isAssetId = !photoPath.contains('/') && !kIsWeb;
-      
+
       // Return the result
       final result = {
         'photoPath': isAssetId ? null : photoPath,

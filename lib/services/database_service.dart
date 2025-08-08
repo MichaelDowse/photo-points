@@ -29,10 +29,10 @@ class DatabaseService {
       // Return a dummy database object that won't be used
       throw UnsupportedError('SQLite not supported on web');
     }
-    
+
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, 'photopoints.db');
-    
+
     return await openDatabase(
       path,
       version: 4,
@@ -55,23 +55,23 @@ class DatabaseService {
           created_at TEXT NOT NULL
         )
       ''');
-      
+
       await db.execute('''
         INSERT INTO photo_points_new (id, name, notes, latitude, longitude, compass_direction, created_at)
         SELECT id, name, notes, latitude, longitude, compass_direction, created_at FROM photo_points
       ''');
-      
+
       await db.execute('DROP TABLE photo_points');
       await db.execute('ALTER TABLE photo_points_new RENAME TO photo_points');
     }
-    
+
     if (oldVersion < 3) {
       // Migration from version 2 to 3: Add orientation column to photos table
       await db.execute('''
         ALTER TABLE photos ADD COLUMN orientation TEXT DEFAULT 'portrait'
       ''');
     }
-    
+
     if (oldVersion < 4) {
       // Migration from version 3 to 4: Add asset_id column for photo library storage
       await db.execute('''
@@ -115,21 +115,17 @@ class DatabaseService {
       await WebStorageService.addPhotoPoint(photoPoint);
       return photoPoint.id;
     }
-    
+
     final db = await database;
-    await db.insert(
-      'photo_points',
-      {
-        'id': photoPoint.id,
-        'name': photoPoint.name,
-        'notes': photoPoint.notes,
-        'latitude': photoPoint.latitude,
-        'longitude': photoPoint.longitude,
-        'compass_direction': photoPoint.compassDirection,
-        'created_at': photoPoint.createdAt.toIso8601String(),
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await db.insert('photo_points', {
+      'id': photoPoint.id,
+      'name': photoPoint.name,
+      'notes': photoPoint.notes,
+      'latitude': photoPoint.latitude,
+      'longitude': photoPoint.longitude,
+      'compass_direction': photoPoint.compassDirection,
+      'created_at': photoPoint.createdAt.toIso8601String(),
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
     return photoPoint.id;
   }
 
@@ -138,24 +134,20 @@ class DatabaseService {
       await WebStorageService.addPhoto(photo);
       return photo.id;
     }
-    
+
     final db = await database;
-    await db.insert(
-      'photos',
-      {
-        'id': photo.id,
-        'photo_point_id': photo.photoPointId,
-        'file_path': photo.filePath,
-        'asset_id': photo.assetId,
-        'latitude': photo.latitude,
-        'longitude': photo.longitude,
-        'compass_direction': photo.compassDirection,
-        'taken_at': photo.takenAt.toIso8601String(),
-        'is_initial': photo.isInitial ? 1 : 0,
-        'orientation': photo.orientation.name,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await db.insert('photos', {
+      'id': photo.id,
+      'photo_point_id': photo.photoPointId,
+      'file_path': photo.filePath,
+      'asset_id': photo.assetId,
+      'latitude': photo.latitude,
+      'longitude': photo.longitude,
+      'compass_direction': photo.compassDirection,
+      'taken_at': photo.takenAt.toIso8601String(),
+      'is_initial': photo.isInitial ? 1 : 0,
+      'orientation': photo.orientation.name,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
     return photo.id;
   }
 
@@ -163,23 +155,27 @@ class DatabaseService {
     if (kIsWeb) {
       return await WebStorageService.loadPhotoPoints();
     }
-    
+
     final db = await database;
-    final List<Map<String, dynamic>> photoPointMaps = await db.query('photo_points');
-    
+    final List<Map<String, dynamic>> photoPointMaps = await db.query(
+      'photo_points',
+    );
+
     List<PhotoPoint> photoPoints = [];
     for (Map<String, dynamic> photoPointMap in photoPointMaps) {
       List<Photo> photos = await getPhotosForPhotoPoint(photoPointMap['id']);
-      photoPoints.add(PhotoPoint(
-        id: photoPointMap['id'],
-        name: photoPointMap['name'],
-        notes: photoPointMap['notes'],
-        latitude: photoPointMap['latitude'],
-        longitude: photoPointMap['longitude'],
-        compassDirection: photoPointMap['compass_direction'],
-        createdAt: DateTime.parse(photoPointMap['created_at']),
-        photos: photos,
-      ));
+      photoPoints.add(
+        PhotoPoint(
+          id: photoPointMap['id'],
+          name: photoPointMap['name'],
+          notes: photoPointMap['notes'],
+          latitude: photoPointMap['latitude'],
+          longitude: photoPointMap['longitude'],
+          compassDirection: photoPointMap['compass_direction'],
+          createdAt: DateTime.parse(photoPointMap['created_at']),
+          photos: photos,
+        ),
+      );
     }
     return photoPoints;
   }
@@ -187,16 +183,19 @@ class DatabaseService {
   Future<PhotoPoint?> getPhotoPoint(String id) async {
     if (kIsWeb) {
       final photoPoints = await WebStorageService.loadPhotoPoints();
-      return photoPoints.firstWhere((pp) => pp.id == id, orElse: () => throw Exception('Photo point not found'));
+      return photoPoints.firstWhere(
+        (pp) => pp.id == id,
+        orElse: () => throw Exception('Photo point not found'),
+      );
     }
-    
+
     final db = await database;
     final List<Map<String, dynamic>> photoPointMaps = await db.query(
       'photo_points',
       where: 'id = ?',
       whereArgs: [id],
     );
-    
+
     if (photoPointMaps.isNotEmpty) {
       Map<String, dynamic> photoPointMap = photoPointMaps.first;
       List<Photo> photos = await getPhotosForPhotoPoint(id);
@@ -217,10 +216,13 @@ class DatabaseService {
   Future<List<Photo>> getPhotosForPhotoPoint(String photoPointId) async {
     if (kIsWeb) {
       final photoPoints = await WebStorageService.loadPhotoPoints();
-      final photoPoint = photoPoints.firstWhere((pp) => pp.id == photoPointId, orElse: () => throw Exception('Photo point not found'));
+      final photoPoint = photoPoints.firstWhere(
+        (pp) => pp.id == photoPointId,
+        orElse: () => throw Exception('Photo point not found'),
+      );
       return photoPoint.photos;
     }
-    
+
     final db = await database;
     final List<Map<String, dynamic>> photoMaps = await db.query(
       'photos',
@@ -228,14 +230,15 @@ class DatabaseService {
       whereArgs: [photoPointId],
       orderBy: 'taken_at ASC',
     );
-    
+
     return List.generate(photoMaps.length, (i) {
-      final orientationString = photoMaps[i]['orientation'] as String? ?? 'portrait';
+      final orientationString =
+          photoMaps[i]['orientation'] as String? ?? 'portrait';
       final orientation = PhotoOrientation.values.firstWhere(
         (o) => o.name == orientationString,
         orElse: () => PhotoOrientation.portrait,
       );
-      
+
       return Photo(
         id: photoMaps[i]['id'],
         photoPointId: photoMaps[i]['photo_point_id'],
@@ -256,7 +259,7 @@ class DatabaseService {
       await WebStorageService.updatePhotoPoint(photoPoint);
       return 1;
     }
-    
+
     final db = await database;
     return await db.update(
       'photo_points',
@@ -272,13 +275,20 @@ class DatabaseService {
     );
   }
 
-  Future<int> updatePhotoPointLocationIfMissing(String photoPointId, double latitude, double longitude, double compassDirection) async {
+  Future<int> updatePhotoPointLocationIfMissing(
+    String photoPointId,
+    double latitude,
+    double longitude,
+    double compassDirection,
+  ) async {
     if (kIsWeb) {
       final photoPoints = await WebStorageService.loadPhotoPoints();
       final index = photoPoints.indexWhere((pp) => pp.id == photoPointId);
       if (index >= 0) {
         final photoPoint = photoPoints[index];
-        if (photoPoint.latitude == null || photoPoint.longitude == null || photoPoint.compassDirection == null) {
+        if (photoPoint.latitude == null ||
+            photoPoint.longitude == null ||
+            photoPoint.compassDirection == null) {
           final updatedPhotoPoint = photoPoint.copyWith(
             latitude: latitude,
             longitude: longitude,
@@ -291,9 +301,9 @@ class DatabaseService {
       }
       return 0;
     }
-    
+
     final db = await database;
-    
+
     // Only update if latitude or longitude is null
     return await db.update(
       'photo_points',
@@ -302,7 +312,8 @@ class DatabaseService {
         'longitude': longitude,
         'compass_direction': compassDirection,
       },
-      where: 'id = ? AND (latitude IS NULL OR longitude IS NULL OR compass_direction IS NULL)',
+      where:
+          'id = ? AND (latitude IS NULL OR longitude IS NULL OR compass_direction IS NULL)',
       whereArgs: [photoPointId],
     );
   }
@@ -312,22 +323,14 @@ class DatabaseService {
       await WebStorageService.deletePhotoPoint(id);
       return 1;
     }
-    
+
     final db = await database;
-    
+
     // First delete all photos associated with this photo point
-    await db.delete(
-      'photos',
-      where: 'photo_point_id = ?',
-      whereArgs: [id],
-    );
-    
+    await db.delete('photos', where: 'photo_point_id = ?', whereArgs: [id]);
+
     // Then delete the photo point itself
-    return await db.delete(
-      'photo_points',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('photo_points', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> deletePhoto(String id) async {
@@ -335,13 +338,9 @@ class DatabaseService {
       await WebStorageService.deletePhoto(id);
       return 1;
     }
-    
+
     final db = await database;
-    return await db.delete(
-      'photos',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('photos', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<void> close() async {

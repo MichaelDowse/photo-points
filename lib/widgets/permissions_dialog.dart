@@ -22,7 +22,7 @@ class _PermissionsDialogState extends State<PermissionsDialog> {
       content: Consumer<AppStateProvider>(
         builder: (context, appState, child) {
           final permissions = appState.permissions;
-          
+
           return Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,9 +45,11 @@ class _PermissionsDialogState extends State<PermissionsDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: _isRequesting ? null : () {
-            Navigator.of(context).pop();
-          },
+          onPressed: _isRequesting
+              ? null
+              : () {
+                  Navigator.of(context).pop();
+                },
           child: const Text('Later'),
         ),
         ElevatedButton(
@@ -77,7 +79,7 @@ class _PermissionsDialogState extends State<PermissionsDialog> {
         children: [
           Icon(
             isGranted ? Icons.check_circle : Icons.cancel,
-            color: isGranted 
+            color: isGranted
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.error,
             size: 20,
@@ -89,15 +91,12 @@ class _PermissionsDialogState extends State<PermissionsDialog> {
               children: [
                 Text(
                   _getPermissionTitle(permissionName),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+                Text(description, style: Theme.of(context).textTheme.bodySmall),
               ],
             ),
           ),
@@ -129,7 +128,7 @@ class _PermissionsDialogState extends State<PermissionsDialog> {
     try {
       final appState = context.read<AppStateProvider>();
       await appState.requestPermissions();
-      
+
       // Check if all permissions are granted
       if (appState.permissions.values.every((granted) => granted)) {
         if (mounted) {

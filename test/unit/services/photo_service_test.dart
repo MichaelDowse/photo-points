@@ -26,7 +26,7 @@ void main() {
 
       mockPhotoService.setMockCameras(mockCameras);
       await mockPhotoService.initializeCameras();
-      
+
       expect(mockPhotoService.isCameraInitialized, true);
       expect(mockPhotoService.cameras.length, 2);
     });
@@ -42,12 +42,12 @@ void main() {
 
       mockPhotoService.setMockCameras(mockCameras);
       await mockPhotoService.initializeCameras();
-      
+
       final photoPath = await mockPhotoService.capturePhoto(
         photoPointId: 'test-photo-point-1',
         photoId: 'test-photo-1',
       );
-      
+
       expect(photoPath, isNotNull);
       expect(photoPath, endsWith('.jpg'));
     });
@@ -55,7 +55,7 @@ void main() {
     test('should handle camera initialization failure', () async {
       // Test camera initialization failure
       expect(mockPhotoService.isCameraInitialized, false);
-      
+
       // Try to capture photo without initialization
       final photoPath = await mockPhotoService.capturePhoto(
         photoPointId: 'test-photo-point-1',
@@ -79,19 +79,19 @@ void main() {
       ];
 
       mockPhotoService.setMockCameras(mockCameras);
-      
+
       // Should prefer back camera for photo points
       final backCamera = mockPhotoService.cameras.firstWhere(
         (camera) => camera.lensDirection == CameraLensDirection.back,
       );
-      
+
       expect(backCamera.name, 'back_camera');
       expect(backCamera.lensDirection, CameraLensDirection.back);
     });
 
     test('should handle no cameras available', () async {
       mockPhotoService.setMockCameras([]);
-      
+
       expect(mockPhotoService.cameras.isEmpty, true);
     });
 
@@ -111,7 +111,7 @@ void main() {
 
       mockPhotoService.setMockCameras(mockCameras);
       await mockPhotoService.initializeCameras();
-      
+
       final photo1 = await mockPhotoService.capturePhoto(
         photoPointId: 'test-photo-point-1',
         photoId: 'test-photo-1',
@@ -120,7 +120,7 @@ void main() {
         photoPointId: 'test-photo-point-1',
         photoId: 'test-photo-2',
       );
-      
+
       expect(photo1, isNotNull);
       expect(photo2, isNotNull);
       // In a real implementation, these would be different
@@ -138,7 +138,7 @@ void main() {
 
       mockPhotoService.setMockCameras(mockCameras);
       await mockPhotoService.initializeCameras();
-      
+
       // Mock service always succeeds, but in real implementation
       // this would test error handling
       final photoPath = await mockPhotoService.capturePhoto(
@@ -159,12 +159,12 @@ void main() {
 
       mockPhotoService.setMockCameras(mockCameras);
       await mockPhotoService.initializeCameras();
-      
+
       final photoPath = await mockPhotoService.capturePhoto(
         photoPointId: 'test-photo-point-1',
         photoId: 'test-photo-1',
       );
-      
+
       expect(photoPath, isNotNull);
       expect(photoPath, contains('.jpg'));
     });

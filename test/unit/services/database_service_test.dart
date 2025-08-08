@@ -7,22 +7,23 @@ import 'dart:io';
 
 void main() {
   late DatabaseService databaseService;
-  
+
   setUpAll(() {
     // Initialize Flutter bindings
     TestWidgetsFlutterBinding.ensureInitialized();
-    
+
     // Mock path provider for testing
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('plugins.flutter.io/path_provider'),
-      (MethodCall methodCall) async {
-        if (methodCall.method == 'getApplicationDocumentsDirectory') {
-          return Directory.systemTemp.path;
-        }
-        return null;
-      },
-    );
-    
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('plugins.flutter.io/path_provider'),
+          (MethodCall methodCall) async {
+            if (methodCall.method == 'getApplicationDocumentsDirectory') {
+              return Directory.systemTemp.path;
+            }
+            return null;
+          },
+        );
+
     // Initialize FFI
     sqfliteFfiInit();
     // Change the default factory
@@ -46,10 +47,10 @@ void main() {
 
     test('should insert and retrieve photo point', () async {
       final photoPoint = TestData.createMockPhotoPoint();
-      
+
       await databaseService.insertPhotoPoint(photoPoint);
       final retrieved = await databaseService.getPhotoPoint(photoPoint.id);
-      
+
       expect(retrieved, isNotNull);
       expect(retrieved!.id, photoPoint.id);
       expect(retrieved.name, photoPoint.name);
@@ -62,12 +63,14 @@ void main() {
     test('should insert and retrieve photo', () async {
       final photoPoint = TestData.createMockPhotoPoint();
       final photo = TestData.createMockPhoto(photoPointId: photoPoint.id);
-      
+
       await databaseService.insertPhotoPoint(photoPoint);
       await databaseService.insertPhoto(photo);
-      
-      final photos = await databaseService.getPhotosForPhotoPoint(photoPoint.id);
-      
+
+      final photos = await databaseService.getPhotosForPhotoPoint(
+        photoPoint.id,
+      );
+
       expect(photos.length, 1);
       expect(photos.first.id, photo.id);
       expect(photos.first.photoPointId, photo.photoPointId);
@@ -77,15 +80,15 @@ void main() {
     test('should update photo point', () async {
       final photoPoint = TestData.createMockPhotoPoint();
       await databaseService.insertPhotoPoint(photoPoint);
-      
+
       final updatedPhotoPoint = photoPoint.copyWith(
         name: 'Updated Name',
         notes: 'Updated notes',
       );
-      
+
       await databaseService.updatePhotoPoint(updatedPhotoPoint);
       final retrieved = await databaseService.getPhotoPoint(photoPoint.id);
-      
+
       expect(retrieved!.name, 'Updated Name');
       expect(retrieved.notes, 'Updated notes');
     });
@@ -93,38 +96,42 @@ void main() {
     test('should delete photo point', () async {
       final photoPoint = TestData.createMockPhotoPoint();
       await databaseService.insertPhotoPoint(photoPoint);
-      
+
       await databaseService.deletePhotoPoint(photoPoint.id);
       final retrieved = await databaseService.getPhotoPoint(photoPoint.id);
-      
+
       expect(retrieved, isNull);
     });
 
     test('should delete photo', () async {
       final photoPoint = TestData.createMockPhotoPoint();
       final photo = TestData.createMockPhoto(photoPointId: photoPoint.id);
-      
+
       await databaseService.insertPhotoPoint(photoPoint);
       await databaseService.insertPhoto(photo);
-      
+
       await databaseService.deletePhoto(photo.id);
-      final photos = await databaseService.getPhotosForPhotoPoint(photoPoint.id);
-      
+      final photos = await databaseService.getPhotosForPhotoPoint(
+        photoPoint.id,
+      );
+
       expect(photos.isEmpty, true);
     });
 
     test('should get all photo points', () async {
       final photoPoints = TestData.createMockPhotoPointList(count: 3);
-      
+
       for (final photoPoint in photoPoints) {
         await databaseService.insertPhotoPoint(photoPoint);
       }
-      
+
       final retrieved = await databaseService.getAllPhotoPoints();
-      
+
       expect(retrieved.length, 3);
-      expect(retrieved.map((p) => p.id).toSet(), 
-             photoPoints.map((p) => p.id).toSet());
+      expect(
+        retrieved.map((p) => p.id).toSet(),
+        photoPoints.map((p) => p.id).toSet(),
+      );
     });
 
     test('should handle photo point with null location data', () async {
@@ -133,10 +140,10 @@ void main() {
         longitude: null,
         compassDirection: null,
       );
-      
+
       await databaseService.insertPhotoPoint(photoPoint);
       final retrieved = await databaseService.getPhotoPoint(photoPoint.id);
-      
+
       expect(retrieved, isNotNull);
       expect(retrieved!.latitude, isNull);
       expect(retrieved.longitude, isNull);
@@ -145,16 +152,24 @@ void main() {
 
     test('should cascade delete photos when photo point is deleted', () async {
       final photoPoint = TestData.createMockPhotoPoint();
-      final photo1 = TestData.createMockPhoto(id: 'photo1', photoPointId: photoPoint.id);
-      final photo2 = TestData.createMockPhoto(id: 'photo2', photoPointId: photoPoint.id);
-      
+      final photo1 = TestData.createMockPhoto(
+        id: 'photo1',
+        photoPointId: photoPoint.id,
+      );
+      final photo2 = TestData.createMockPhoto(
+        id: 'photo2',
+        photoPointId: photoPoint.id,
+      );
+
       await databaseService.insertPhotoPoint(photoPoint);
       await databaseService.insertPhoto(photo1);
       await databaseService.insertPhoto(photo2);
-      
+
       await databaseService.deletePhotoPoint(photoPoint.id);
-      final photos = await databaseService.getPhotosForPhotoPoint(photoPoint.id);
-      
+      final photos = await databaseService.getPhotosForPhotoPoint(
+        photoPoint.id,
+      );
+
       expect(photos.isEmpty, true);
     });
   });

@@ -6,7 +6,7 @@ void main() {
   group('LocationData', () {
     test('should create LocationData with all fields', () {
       final timestamp = DateTime.now();
-      
+
       final locationData = LocationData(
         latitude: 37.7749,
         longitude: -122.4194,
@@ -50,9 +50,15 @@ void main() {
       final deserializedLocationData = LocationData.fromJson(json);
 
       expect(deserializedLocationData.latitude, originalLocationData.latitude);
-      expect(deserializedLocationData.longitude, originalLocationData.longitude);
+      expect(
+        deserializedLocationData.longitude,
+        originalLocationData.longitude,
+      );
       expect(deserializedLocationData.accuracy, originalLocationData.accuracy);
-      expect(deserializedLocationData.timestamp, originalLocationData.timestamp);
+      expect(
+        deserializedLocationData.timestamp,
+        originalLocationData.timestamp,
+      );
     });
 
     test('should handle JSON serialization correctly', () {
@@ -85,29 +91,36 @@ void main() {
         timestamp: DateTime.now(),
       );
 
-      expect(validLocationData.latitude >= -90 && validLocationData.latitude <= 90, true);
-      expect(validLocationData.longitude >= -180 && validLocationData.longitude <= 180, true);
+      expect(
+        validLocationData.latitude >= -90 && validLocationData.latitude <= 90,
+        true,
+      );
+      expect(
+        validLocationData.longitude >= -180 &&
+            validLocationData.longitude <= 180,
+        true,
+      );
     });
 
     test('should validate accuracy values', () {
       final locationData = TestData.createMockLocationData(accuracy: 5.0);
-      
+
       expect(locationData.accuracy, 5.0);
       expect(locationData.accuracy >= 0, true); // Accuracy should be positive
     });
 
     test('should validate accuracy values', () {
       final locationData = TestData.createMockLocationData(accuracy: 5.0);
-      
+
       expect(locationData.accuracy, 5.0);
       expect(locationData.accuracy >= 0, true); // Accuracy should be positive
     });
 
     test('should handle edge case coordinates', () {
       final edgeCases = [
-        {'lat': 90.0, 'lng': 180.0},    // North pole, antimeridian
-        {'lat': -90.0, 'lng': -180.0},  // South pole, antimeridian
-        {'lat': 0.0, 'lng': 0.0},       // Null island
+        {'lat': 90.0, 'lng': 180.0}, // North pole, antimeridian
+        {'lat': -90.0, 'lng': -180.0}, // South pole, antimeridian
+        {'lat': 0.0, 'lng': 0.0}, // Null island
       ];
 
       for (final testCase in edgeCases) {
@@ -118,17 +131,28 @@ void main() {
           timestamp: DateTime.now(),
         );
 
-        expect(locationData.latitude >= -90 && locationData.latitude <= 90, true);
-        expect(locationData.longitude >= -180 && locationData.longitude <= 180, true);
+        expect(
+          locationData.latitude >= -90 && locationData.latitude <= 90,
+          true,
+        );
+        expect(
+          locationData.longitude >= -180 && locationData.longitude <= 180,
+          true,
+        );
       }
     });
 
     test('should handle timestamp validation', () {
       final now = DateTime.now();
       final locationData = TestData.createMockLocationData(timestamp: now);
-      
+
       expect(locationData.timestamp, now);
-      expect(locationData.timestamp.isBefore(DateTime.now().add(Duration(seconds: 1))), true);
+      expect(
+        locationData.timestamp.isBefore(
+          DateTime.now().add(Duration(seconds: 1)),
+        ),
+        true,
+      );
     });
 
     test('should calculate distance to another location', () {
@@ -136,7 +160,7 @@ void main() {
         latitude: 37.7749,
         longitude: -122.4194,
       );
-      
+
       final location2 = TestData.createMockLocationData(
         latitude: 37.7849,
         longitude: -122.4094,
@@ -147,11 +171,11 @@ void main() {
       expect(location1.longitude, isNotNull);
       expect(location2.latitude, isNotNull);
       expect(location2.longitude, isNotNull);
-      
+
       // In a real implementation, this would calculate actual distance
       final latDiff = (location2.latitude - location1.latitude).abs();
       final lngDiff = (location2.longitude - location1.longitude).abs();
-      
+
       expect(latDiff, greaterThan(0));
       expect(lngDiff, greaterThan(0));
     });
@@ -163,7 +187,7 @@ void main() {
         accuracy: 5.0,
         timestamp: DateTime.now(),
       );
-      
+
       expect(highPrecisionLocation.latitude, closeTo(37.7749295, 0.0000001));
       expect(highPrecisionLocation.longitude, closeTo(-122.4194155, 0.0000001));
     });

@@ -10,17 +10,17 @@ import 'utils/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Set default orientation to portrait for most screens
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  
+
   // Initialize camera
   final photoService = PhotoService();
   await photoService.initializeCameras();
-  
+
   runApp(const PhotoPointsApp());
 }
 
@@ -38,15 +38,14 @@ class PhotoPointsApp extends StatelessWidget {
         themeMode: ThemeMode.system,
         home: const MainTabScreen(),
         debugShowCheckedModeBanner: false,
-        routes: {
-          '/photo_points': (context) => const PhotoPointsListScreen(),
-        },
+        routes: {'/photo_points': (context) => const PhotoPointsListScreen()},
         onGenerateRoute: (settings) {
           switch (settings.name) {
             case '/photo_point_detail':
               final photoPointId = settings.arguments as String;
               return MaterialPageRoute(
-                builder: (context) => ShowPhotoPointScreen(photoPointId: photoPointId),
+                builder: (context) =>
+                    ShowPhotoPointScreen(photoPointId: photoPointId),
               );
             default:
               return null;

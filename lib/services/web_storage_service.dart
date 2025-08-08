@@ -6,7 +6,7 @@ import '../models/photo.dart';
 
 class WebStorageService {
   static const String _photoPointsKey = 'photo_points';
-  
+
   static Future<void> savePhotoPoints(List<PhotoPoint> photoPoints) async {
     if (kIsWeb) {
       final prefs = await SharedPreferences.getInstance();
@@ -14,7 +14,7 @@ class WebStorageService {
       await prefs.setString(_photoPointsKey, jsonEncode(jsonList));
     }
   }
-  
+
   static Future<List<PhotoPoint>> loadPhotoPoints() async {
     if (kIsWeb) {
       final prefs = await SharedPreferences.getInstance();
@@ -26,7 +26,7 @@ class WebStorageService {
     }
     return [];
   }
-  
+
   static Future<void> deletePhotoPoint(String id) async {
     if (kIsWeb) {
       final photoPoints = await loadPhotoPoints();
@@ -34,7 +34,7 @@ class WebStorageService {
       await savePhotoPoints(photoPoints);
     }
   }
-  
+
   static Future<void> addPhotoPoint(PhotoPoint photoPoint) async {
     if (kIsWeb) {
       final photoPoints = await loadPhotoPoints();
@@ -42,7 +42,7 @@ class WebStorageService {
       await savePhotoPoints(photoPoints);
     }
   }
-  
+
   static Future<void> updatePhotoPoint(PhotoPoint photoPoint) async {
     if (kIsWeb) {
       final photoPoints = await loadPhotoPoints();
@@ -53,18 +53,20 @@ class WebStorageService {
       }
     }
   }
-  
+
   static Future<void> addPhoto(Photo photo) async {
     if (kIsWeb) {
       final photoPoints = await loadPhotoPoints();
-      final photoPointIndex = photoPoints.indexWhere((pp) => pp.id == photo.photoPointId);
+      final photoPointIndex = photoPoints.indexWhere(
+        (pp) => pp.id == photo.photoPointId,
+      );
       if (photoPointIndex >= 0) {
         photoPoints[photoPointIndex].photos.add(photo);
         await savePhotoPoints(photoPoints);
       }
     }
   }
-  
+
   static Future<void> deletePhoto(String photoId) async {
     if (kIsWeb) {
       final photoPoints = await loadPhotoPoints();

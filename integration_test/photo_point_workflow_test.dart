@@ -13,18 +13,19 @@ void main() {
   setUpAll(() {
     // Initialize Flutter bindings
     TestWidgetsFlutterBinding.ensureInitialized();
-    
+
     // Mock path provider for testing
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('plugins.flutter.io/path_provider'),
-      (MethodCall methodCall) async {
-        if (methodCall.method == 'getApplicationDocumentsDirectory') {
-          return Directory.systemTemp.path;
-        }
-        return null;
-      },
-    );
-    
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('plugins.flutter.io/path_provider'),
+          (MethodCall methodCall) async {
+            if (methodCall.method == 'getApplicationDocumentsDirectory') {
+              return Directory.systemTemp.path;
+            }
+            return null;
+          },
+        );
+
     // Initialize FFI
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
@@ -33,7 +34,7 @@ void main() {
   setUp(() async {
     databaseService = DatabaseService();
     appStateProvider = AppStateProvider();
-    
+
     // Clean up any existing data before each test
     final db = await databaseService.database;
     await db.execute('DELETE FROM photos');
@@ -91,7 +92,7 @@ void main() {
       // Verify photo point and photos were added
       await appStateProvider.loadPhotoPoints();
       expect(appStateProvider.photoPoints.length, 1);
-      
+
       final addedPhotoPoint = appStateProvider.photoPoints.first;
       expect(addedPhotoPoint.photos.length, 2);
       expect(addedPhotoPoint.photos.first.isInitial, true);
@@ -201,11 +202,11 @@ void main() {
       // Test error handling by creating invalid photo point
       // This would depend on actual validation in the app
       expect(appStateProvider.error, isNull);
-      
+
       // Try to load photo points when database is not available
       // This would test error handling
       await appStateProvider.loadPhotoPoints();
-      
+
       // App should handle errors gracefully
       expect(appStateProvider.isLoading, false);
     });
@@ -213,16 +214,16 @@ void main() {
     test('Loading state workflow', () async {
       // Test loading states
       expect(appStateProvider.isLoading, false);
-      
+
       // Create a photo point
       final photoPoint = TestData.createMockPhotoPoint();
-      
+
       // Add photo point (this should trigger loading state)
       final addFuture = appStateProvider.addPhotoPoint(photoPoint);
-      
+
       // Note: In a real test, we might check loading state here
       // but it's very fast in tests
-      
+
       await addFuture;
       expect(appStateProvider.isLoading, false);
     });
@@ -263,7 +264,10 @@ void main() {
 
       // Verify data persisted
       expect(newAppStateProvider.photoPoints.length, 1);
-      expect(newAppStateProvider.photoPoints.first.name, 'Persistent Photo Point');
+      expect(
+        newAppStateProvider.photoPoints.first.name,
+        'Persistent Photo Point',
+      );
     });
   });
 }

@@ -13,11 +13,13 @@ import 'unit/services/permission_service_test.dart' as permission_service_test;
 
 // Widget tests
 import 'widget/widgets/photo_point_card_test.dart' as photo_point_card_test;
-import 'widget/widgets/confirmation_dialog_test.dart' as confirmation_dialog_test;
+import 'widget/widgets/confirmation_dialog_test.dart'
+    as confirmation_dialog_test;
 import 'widget/widgets/photo_grid_test.dart' as photo_grid_test;
 
 // Integration tests
-import '../integration_test/photo_point_workflow_test.dart' as photo_point_workflow_test;
+import '../integration_test/photo_point_workflow_test.dart'
+    as photo_point_workflow_test;
 
 void main() {
   group('PhotoPoints Test Suite', () {

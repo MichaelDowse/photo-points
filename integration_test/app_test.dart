@@ -7,7 +7,9 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('PhotoPoints App Integration Tests', () {
-    testWidgets('Complete user workflow - Create and manage photo points', (tester) async {
+    testWidgets('Complete user workflow - Create and manage photo points', (
+      tester,
+    ) async {
       // Start the app
       app.main();
       await tester.pumpAndSettle();
@@ -32,7 +34,10 @@ void main() {
       // If there are additional text fields for notes
       final textFields = find.byType(TextField);
       if (textFields.evaluate().length > 1) {
-        await tester.enterText(textFields.last, 'Test notes for integration test');
+        await tester.enterText(
+          textFields.last,
+          'Test notes for integration test',
+        );
         await tester.pumpAndSettle();
       }
 
@@ -51,11 +56,11 @@ void main() {
 
       // Verify we're on the photo point detail screen
       expect(find.text('Test Photo Point'), findsOneWidget);
-      
+
       // Test navigation back to main screen
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      
+
       // Verify we're back on the main screen
       expect(find.text('PhotoPoints'), findsOneWidget);
       expect(find.text('Test Photo Point'), findsOneWidget);
@@ -69,11 +74,11 @@ void main() {
       // The app should handle permissions gracefully
       // This test verifies the app doesn't crash when permissions are not granted
       expect(find.text('PhotoPoints'), findsOneWidget);
-      
+
       // Try to access camera functionality
       await tester.tap(find.byType(FloatingActionButton));
       await tester.pumpAndSettle();
-      
+
       // The app should handle camera/location permission requests
       // and show appropriate messages or prompts
       expect(find.byType(Scaffold), findsOneWidget);
@@ -87,10 +92,13 @@ void main() {
       // Create a photo point
       await tester.tap(find.byType(FloatingActionButton));
       await tester.pumpAndSettle();
-      
-      await tester.enterText(find.byType(TextField).first, 'Persistent Test Point');
+
+      await tester.enterText(
+        find.byType(TextField).first,
+        'Persistent Test Point',
+      );
       await tester.pumpAndSettle();
-      
+
       final saveButton = find.byType(ElevatedButton).first;
       await tester.tap(saveButton);
       await tester.pumpAndSettle();
@@ -104,7 +112,7 @@ void main() {
         null,
         (data) {},
       );
-      
+
       app.main();
       await tester.pumpAndSettle();
 
@@ -140,11 +148,11 @@ void main() {
       // Test navigation between screens
       await tester.tap(find.byType(FloatingActionButton));
       await tester.pumpAndSettle();
-      
+
       // Navigate back
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      
+
       // Verify we're back on main screen
       expect(find.text('PhotoPoints'), findsOneWidget);
     });
@@ -158,14 +166,14 @@ void main() {
       for (int i = 1; i <= 3; i++) {
         await tester.tap(find.byType(FloatingActionButton));
         await tester.pumpAndSettle();
-        
+
         await tester.enterText(find.byType(TextField).first, 'Photo Point $i');
         await tester.pumpAndSettle();
-        
+
         final saveButton = find.byType(ElevatedButton).first;
         await tester.tap(saveButton);
         await tester.pumpAndSettle();
-        
+
         expect(find.text('Photo Point $i'), findsOneWidget);
       }
 
@@ -183,16 +191,16 @@ void main() {
       // Verify theme is applied correctly
       expect(find.byType(MaterialApp), findsOneWidget);
       expect(find.byType(Scaffold), findsOneWidget);
-      
+
       // Test theme consistency across screens
       await tester.tap(find.byType(FloatingActionButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.byType(Scaffold), findsOneWidget);
-      
+
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.byType(Scaffold), findsOneWidget);
     });
 
@@ -208,21 +216,21 @@ void main() {
       // Test empty name validation
       await tester.enterText(find.byType(TextField).first, '');
       await tester.pumpAndSettle();
-      
+
       final saveButton = find.byType(ElevatedButton).first;
       await tester.tap(saveButton);
       await tester.pumpAndSettle();
 
       // App should handle empty input gracefully
       expect(find.byType(Scaffold), findsOneWidget);
-      
+
       // Test with valid data
       await tester.enterText(find.byType(TextField).first, 'Valid Photo Point');
       await tester.pumpAndSettle();
-      
+
       await tester.tap(saveButton);
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Valid Photo Point'), findsOneWidget);
     });
   });

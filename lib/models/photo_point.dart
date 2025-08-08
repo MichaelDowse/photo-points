@@ -53,7 +53,7 @@ class PhotoPoint {
   }
 
   Photo? get initialPhoto => photos.isNotEmpty ? photos.first : null;
-  
+
   String? get compassCardinalDirection {
     if (compassDirection == null) return null;
     final direction = compassDirection!;

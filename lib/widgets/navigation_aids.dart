@@ -34,23 +34,23 @@ class NavigationAids extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             // Location aid
-            if (currentLocation != null && 
-                targetLatitude != null && 
+            if (currentLocation != null &&
+                targetLatitude != null &&
                 targetLongitude != null)
               Expanded(child: _buildLocationAid(context))
             else if (targetLatitude == null || targetLongitude == null)
               Expanded(child: _buildMissingLocationAid(context)),
-            
+
             const SizedBox(width: 8),
-            
+
             // Compass aid
             if (currentCompass != null && targetCompassDirection != null)
               Expanded(child: _buildCompassAid(context))
             else if (targetCompassDirection == null)
               Expanded(child: _buildMissingCompassAid(context)),
-            
+
             const SizedBox(width: 8),
-            
+
             // Orientation aid
             if (targetOrientation != null && currentOrientation != null)
               Expanded(child: _buildOrientationAid(context)),
@@ -68,7 +68,10 @@ class NavigationAids extends StatelessWidget {
       timestamp: DateTime.now(),
     );
 
-    final isOnSite = LocationService().isOnSite(currentLocation!, targetLocation);
+    final isOnSite = LocationService().isOnSite(
+      currentLocation!,
+      targetLocation,
+    );
     final instruction = isOnSite ? 'On target' : 'Move to target';
 
     return Container(
@@ -148,26 +151,18 @@ class NavigationAids extends StatelessWidget {
     );
   }
 
-
   Widget _buildMissingLocationAid(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.grey,
-          width: 2,
-        ),
+        border: Border.all(color: Colors.grey, width: 2),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.location_off,
-            color: Colors.grey,
-            size: 20,
-          ),
+          Icon(Icons.location_off, color: Colors.grey, size: 20),
           const SizedBox(height: 4),
           Text(
             'Not available',
@@ -189,19 +184,12 @@ class NavigationAids extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.grey,
-          width: 2,
-        ),
+        border: Border.all(color: Colors.grey, width: 2),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.explore_off,
-            color: Colors.grey,
-            size: 20,
-          ),
+          Icon(Icons.explore_off, color: Colors.grey, size: 20),
           const SizedBox(height: 4),
           Text(
             'Not available',
@@ -219,7 +207,7 @@ class NavigationAids extends StatelessWidget {
 
   Widget _buildOrientationAid(BuildContext context) {
     final isCorrectOrientation = currentOrientation == targetOrientation;
-    final instruction = isCorrectOrientation 
+    final instruction = isCorrectOrientation
         ? 'Orientation matched'
         : 'Turn device to ${targetOrientation!.displayName.toLowerCase()}';
 

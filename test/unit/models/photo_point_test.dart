@@ -7,7 +7,7 @@ void main() {
     test('should create PhotoPoint with all fields', () {
       final createdAt = DateTime.now();
       final photos = [TestData.createMockPhoto()];
-      
+
       final photoPoint = PhotoPoint(
         id: 'test-id',
         name: 'Test Point',
@@ -74,9 +74,15 @@ void main() {
       expect(deserializedPhotoPoint.notes, originalPhotoPoint.notes);
       expect(deserializedPhotoPoint.latitude, originalPhotoPoint.latitude);
       expect(deserializedPhotoPoint.longitude, originalPhotoPoint.longitude);
-      expect(deserializedPhotoPoint.compassDirection, originalPhotoPoint.compassDirection);
+      expect(
+        deserializedPhotoPoint.compassDirection,
+        originalPhotoPoint.compassDirection,
+      );
       expect(deserializedPhotoPoint.createdAt, originalPhotoPoint.createdAt);
-      expect(deserializedPhotoPoint.photos.length, originalPhotoPoint.photos.length);
+      expect(
+        deserializedPhotoPoint.photos.length,
+        originalPhotoPoint.photos.length,
+      );
     });
 
     test('should handle JSON serialization with null values', () {
@@ -118,7 +124,10 @@ void main() {
       expect(modifiedPhotoPoint.notes, 'Modified notes');
       expect(modifiedPhotoPoint.latitude, 40.7128);
       expect(modifiedPhotoPoint.longitude, -74.0060);
-      expect(modifiedPhotoPoint.compassDirection, originalPhotoPoint.compassDirection);
+      expect(
+        modifiedPhotoPoint.compassDirection,
+        originalPhotoPoint.compassDirection,
+      );
       expect(modifiedPhotoPoint.createdAt, originalPhotoPoint.createdAt);
       expect(modifiedPhotoPoint.photos, originalPhotoPoint.photos);
     });
@@ -132,7 +141,10 @@ void main() {
       expect(copyPhotoPoint.notes, originalPhotoPoint.notes);
       expect(copyPhotoPoint.latitude, originalPhotoPoint.latitude);
       expect(copyPhotoPoint.longitude, originalPhotoPoint.longitude);
-      expect(copyPhotoPoint.compassDirection, originalPhotoPoint.compassDirection);
+      expect(
+        copyPhotoPoint.compassDirection,
+        originalPhotoPoint.compassDirection,
+      );
       expect(copyPhotoPoint.createdAt, originalPhotoPoint.createdAt);
       expect(copyPhotoPoint.photos, originalPhotoPoint.photos);
     });
@@ -149,27 +161,37 @@ void main() {
         photos: [],
       );
 
-      expect(validPhotoPoint.latitude! >= -90 && validPhotoPoint.latitude! <= 90, true);
-      expect(validPhotoPoint.longitude! >= -180 && validPhotoPoint.longitude! <= 180, true);
-      expect(validPhotoPoint.compassDirection! >= 0 && validPhotoPoint.compassDirection! < 360, true);
+      expect(
+        validPhotoPoint.latitude! >= -90 && validPhotoPoint.latitude! <= 90,
+        true,
+      );
+      expect(
+        validPhotoPoint.longitude! >= -180 && validPhotoPoint.longitude! <= 180,
+        true,
+      );
+      expect(
+        validPhotoPoint.compassDirection! >= 0 &&
+            validPhotoPoint.compassDirection! < 360,
+        true,
+      );
     });
 
     test('should handle photos list operations', () {
       final photo1 = TestData.createMockPhoto(id: 'photo1');
       final photo2 = TestData.createMockPhoto(id: 'photo2');
-      
+
       final photoPoint = TestData.createMockPhotoPoint(photos: [photo1]);
-      
+
       expect(photoPoint.photos.length, 1);
       expect(photoPoint.photos.first.id, 'photo1');
-      
+
       final updatedPhotoPoint = photoPoint.copyWith(photos: [photo1, photo2]);
       expect(updatedPhotoPoint.photos.length, 2);
     });
 
     test('should handle empty photos list', () {
       final photoPoint = TestData.createMockPhotoPoint(photos: []);
-      
+
       expect(photoPoint.photos.isEmpty, true);
       expect(photoPoint.photos.length, 0);
     });

@@ -24,15 +24,18 @@ class LocationData {
 
   double distanceTo(LocationData other) {
     const double earthRadius = 6371000; // Earth's radius in meters
-    
+
     double lat1Rad = latitude * math.pi / 180;
     double lat2Rad = other.latitude * math.pi / 180;
     double deltaLatRad = (other.latitude - latitude) * math.pi / 180;
     double deltaLonRad = (other.longitude - longitude) * math.pi / 180;
 
-    double a = math.sin(deltaLatRad / 2) * math.sin(deltaLatRad / 2) +
-        math.cos(lat1Rad) * math.cos(lat2Rad) *
-        math.sin(deltaLonRad / 2) * math.sin(deltaLonRad / 2);
+    double a =
+        math.sin(deltaLatRad / 2) * math.sin(deltaLatRad / 2) +
+        math.cos(lat1Rad) *
+            math.cos(lat2Rad) *
+            math.sin(deltaLonRad / 2) *
+            math.sin(deltaLonRad / 2);
     double c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
 
     return earthRadius * c;

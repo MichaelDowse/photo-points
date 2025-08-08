@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import '../models/photo.dart';
 
 class PhotoGrid extends StatelessWidget {
@@ -63,17 +64,14 @@ class PhotoGrid extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Initial photo badge
           if (photo.isInitial)
             Positioned(
               top: 8,
               left: 8,
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 6,
-                  vertical: 2,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(4),
@@ -88,30 +86,24 @@ class PhotoGrid extends StatelessWidget {
                 ),
               ),
             ),
-          
+
           // Date badge
           Positioned(
             bottom: 8,
             left: 8,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 6,
-                vertical: 2,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
                 _formatDate(photo.takenAt),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                ),
+                style: const TextStyle(color: Colors.white, fontSize: 10),
               ),
             ),
           ),
-          
+
           // Action menu
           Positioned(
             top: 8,
@@ -135,7 +127,11 @@ class PhotoGrid extends StatelessWidget {
                   value: 'share',
                   child: Row(
                     children: [
-                      Icon(Icons.share, size: 16, color: Theme.of(context).colorScheme.primary),
+                      Icon(
+                        Icons.share,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       const SizedBox(width: 8),
                       const Text('Share'),
                     ],
@@ -145,7 +141,11 @@ class PhotoGrid extends StatelessWidget {
                   value: 'share_with_watermark',
                   child: Row(
                     children: [
-                      Icon(Icons.water_drop, size: 16, color: Theme.of(context).colorScheme.primary),
+                      Icon(
+                        Icons.water_drop,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       const SizedBox(width: 8),
                       const Text('Share with Watermark'),
                     ],
@@ -178,14 +178,18 @@ class PhotoGrid extends StatelessWidget {
         children: [
           Icon(
             Icons.broken_image,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.4),
             size: 32,
           ),
           const SizedBox(height: 8),
           Text(
             'Image not found',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
               fontSize: 12,
             ),
           ),
@@ -232,7 +236,10 @@ class PhotoGrid extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
               return Image(
-                image: AssetEntityImageProvider(snapshot.data!, isOriginal: false),
+                image: AssetEntityImageProvider(
+                  snapshot.data!,
+                  isOriginal: false,
+                ),
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
@@ -286,13 +293,13 @@ class PhotoGrid extends StatelessWidget {
             // Fall through to file path check
           }
         }
-        
+
         // Fallback to file path
         if (photo.filePath != null) {
           final file = File(photo.filePath!);
           return await file.exists();
         }
-        
+
         return false;
       }
     } catch (e) {

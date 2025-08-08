@@ -20,7 +20,7 @@ class PhotoService {
   List<CameraDescription> cameras = [];
   CameraController? _controller;
   final ImagePicker _picker = ImagePicker();
-  
+
   Future<void> initializeCameras() async {
     try {
       cameras = await availableCameras();
@@ -37,13 +37,13 @@ class PhotoService {
       if (cameras.isEmpty) {
         await initializeCameras();
       }
-      
+
       if (cameras.isEmpty) {
         throw Exception('No cameras available');
       }
 
       final selectedCamera = camera ?? cameras.first;
-      
+
       _controller = CameraController(
         selectedCamera,
         resolutionPreset,
@@ -68,7 +68,7 @@ class PhotoService {
       }
 
       final XFile imageFile = await _controller!.takePicture();
-      
+
       if (kIsWeb) {
         // On web, return the blob URL as is
         return imageFile.path;
@@ -76,18 +76,20 @@ class PhotoService {
         // On native platforms, save to Photos Library
         try {
           // Request permission to access photos
-          final PermissionState ps = await PhotoManager.requestPermissionExtend();
+          final PermissionState ps =
+              await PhotoManager.requestPermissionExtend();
           if (!ps.hasAccess) {
             debugPrint('No permission to access photos');
             return null;
           }
-          
+
           // Save to Photos Library and get asset ID
-          final AssetEntity? asset = await PhotoManager.editor.saveImageWithPath(
-            imageFile.path,
-            title: 'PhotoPoint_${photoPointId}_$photoId',
-          );
-          
+          final AssetEntity? asset = await PhotoManager.editor
+              .saveImageWithPath(
+                imageFile.path,
+                title: 'PhotoPoint_${photoPointId}_$photoId',
+              );
+
           if (asset != null) {
             // Clean up temporary file
             await File(imageFile.path).delete();
@@ -101,16 +103,16 @@ class PhotoService {
           // Fallback: save to app directory as before
           final Directory appDir = await getApplicationDocumentsDirectory();
           final String photoDir = join(appDir.path, 'photos', photoPointId);
-          
+
           // Create directory if it doesn't exist
           await Directory(photoDir).create(recursive: true);
-          
+
           final String filePath = join(photoDir, '$photoId.jpg');
-          
+
           // Move the file to our designated location
           await File(imageFile.path).copy(filePath);
           await File(imageFile.path).delete();
-          
+
           return filePath;
         }
       }
@@ -138,7 +140,7 @@ class PhotoService {
       if (kIsWeb) {
         return null; // Asset IDs not supported on web
       }
-      
+
       final AssetEntity? asset = await AssetEntity.fromId(assetId);
       if (asset != null) {
         return await asset.originBytes;
@@ -157,7 +159,7 @@ class PhotoService {
         final bytes = await getPhotoBytesFromAssetId(photo.assetId!);
         if (bytes != null) return bytes;
       }
-      
+
       // Fallback to file path (legacy method)
       if (photo.filePath != null) {
         if (kIsWeb) {
@@ -171,7 +173,7 @@ class PhotoService {
           }
         }
       }
-      
+
       return null;
     } catch (e) {
       debugPrint('Error getting photo bytes: $e');
@@ -226,9 +228,14 @@ class PhotoService {
     }
   }
 
-  Future<String?> resizePhoto(String filePath, {int maxWidth = 1024, int maxHeight = 1024}) async {
+  Future<String?> resizePhoto(
+    String filePath, {
+    int maxWidth = 1024,
+    int maxHeight = 1024,
+  }) async {
     try {
-      final image = await getPhotoImageLegacy(filePath);
+      final bytes = await File(filePath).readAsBytes();
+      final image = img.decodeImage(bytes);
       if (image == null) return null;
 
       final resized = img.copyResize(
@@ -240,7 +247,7 @@ class PhotoService {
 
       final resizedBytes = img.encodeJpg(resized, quality: 85);
       await File(filePath).writeAsBytes(resizedBytes);
-      
+
       return filePath;
     } catch (e) {
       debugPrint('Error resizing photo: $e');
@@ -255,7 +262,7 @@ class PhotoService {
         debugPrint('Delete not supported on web platform');
         return true;
       }
-      
+
       final file = File(filePath);
       if (await file.exists()) {
         await file.delete();
@@ -275,11 +282,11 @@ class PhotoService {
         debugPrint('Delete not supported on web platform');
         return true;
       }
-      
+
       final Directory appDir = await getApplicationDocumentsDirectory();
       final String photoDir = join(appDir.path, 'photos', photoPointId);
       final Directory dir = Directory(photoDir);
-      
+
       if (await dir.exists()) {
         await dir.delete(recursive: true);
         return true;
@@ -291,28 +298,41 @@ class PhotoService {
     }
   }
 
-  Future<void> sharePhoto(String filePath, {bool withWatermark = false, Photo? photoData, String? photoPointName}) async {
+  Future<void> sharePhoto(
+    String filePath, {
+    bool withWatermark = false,
+    Photo? photoData,
+    String? photoPointName,
+  }) async {
     try {
       final file = File(filePath);
       if (await file.exists()) {
         String? shareFilePath = filePath;
         String? tempFilePath;
-        
+
         if (withWatermark && photoData != null) {
-          final watermarkedPath = await _createWatermarkedPhoto(filePath, photoData);
+          final watermarkedPath = await _createWatermarkedPhoto(
+            filePath,
+            photoData,
+          );
           if (watermarkedPath != null) {
             shareFilePath = watermarkedPath;
             tempFilePath = watermarkedPath;
           }
         }
-        
+
         if (photoData != null && photoPointName != null) {
-          final customFilename = generateShareFilename(photoPointName, photoData.takenAt);
-          await Share.shareXFiles([XFile(shareFilePath, name: '$customFilename.jpg')]);
+          final customFilename = generateShareFilename(
+            photoPointName,
+            photoData.takenAt,
+          );
+          await Share.shareXFiles([
+            XFile(shareFilePath, name: '$customFilename.jpg'),
+          ]);
         } else {
           await Share.shareXFiles([XFile(shareFilePath)]);
         }
-        
+
         if (tempFilePath != null) {
           await File(tempFilePath).delete();
         }
@@ -322,13 +342,16 @@ class PhotoService {
     }
   }
 
-  Future<void> sharePhotoPoint(PhotoPoint photoPoint, {bool withWatermark = false}) async {
+  Future<void> sharePhotoPoint(
+    PhotoPoint photoPoint, {
+    bool withWatermark = false,
+  }) async {
     try {
       if (photoPoint.photos.isEmpty) return;
 
       List<XFile> files = [];
       List<String> tempFiles = [];
-      
+
       for (int i = 0; i < photoPoint.photos.length; i++) {
         final Photo photo = photoPoint.photos[i];
         final filePath = photo.filePath;
@@ -336,16 +359,22 @@ class PhotoService {
           final file = File(filePath);
           if (await file.exists()) {
             String shareFilePath = filePath;
-            
+
             if (withWatermark) {
-              final watermarkedPath = await _createWatermarkedPhoto(filePath, photo);
+              final watermarkedPath = await _createWatermarkedPhoto(
+                filePath,
+                photo,
+              );
               if (watermarkedPath != null) {
                 shareFilePath = watermarkedPath;
                 tempFiles.add(watermarkedPath);
               }
             }
-            
-            final customFilename = generateShareFilename(photoPoint.name, photo.takenAt);
+
+            final customFilename = generateShareFilename(
+              photoPoint.name,
+              photo.takenAt,
+            );
             final suffix = photoPoint.photos.length > 1 ? '_${i + 1}' : '';
             files.add(XFile(shareFilePath, name: '$customFilename$suffix.jpg'));
           }
@@ -354,7 +383,7 @@ class PhotoService {
 
       if (files.isNotEmpty) {
         await Share.shareXFiles(files, text: 'Photo Point: ${photoPoint.name}');
-        
+
         for (String tempFile in tempFiles) {
           await File(tempFile).delete();
         }
@@ -364,14 +393,18 @@ class PhotoService {
     }
   }
 
-  Future<img.Image?> createOverlayImage(String baseImagePath, {double opacity = 0.5}) async {
+  Future<img.Image?> createOverlayImage(
+    String baseImagePath, {
+    double opacity = 0.5,
+  }) async {
     try {
-      final baseImage = await getPhotoImageLegacy(baseImagePath);
+      final bytes = await File(baseImagePath).readAsBytes();
+      final baseImage = img.decodeImage(bytes);
       if (baseImage == null) return null;
 
       // Create a copy of the image with adjusted opacity
       final overlayImage = img.Image.from(baseImage);
-      
+
       // Apply opacity to each pixel
       for (int y = 0; y < overlayImage.height; y++) {
         for (int x = 0; x < overlayImage.width; x++) {
@@ -399,7 +432,7 @@ class PhotoService {
         // On web, assume blob URLs exist if they're not empty
         return filePath.isNotEmpty;
       }
-      
+
       final file = File(filePath);
       return await file.exists();
     } catch (e) {
@@ -413,7 +446,7 @@ class PhotoService {
         // On web, we can't get file size from blob URLs, return 0
         return 0;
       }
-      
+
       final file = File(filePath);
       if (await file.exists()) {
         return await file.length();
@@ -427,7 +460,8 @@ class PhotoService {
   String formatFileSize(int bytes) {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    if (bytes < 1024 * 1024 * 1024) return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    if (bytes < 1024 * 1024 * 1024)
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 
@@ -448,26 +482,26 @@ class PhotoService {
         debugPrint('GPS extraction not supported on web platform');
         return {'latitude': null, 'longitude': null};
       }
-      
+
       final bytes = await File(imagePath).readAsBytes();
       final data = await readExifFromBytes(bytes);
-      
+
       if (data.isEmpty) {
         return {'latitude': null, 'longitude': null};
       }
-      
+
       final gpsLat = data['GPS GPSLatitude'];
       final gpsLatRef = data['GPS GPSLatitudeRef'];
       final gpsLng = data['GPS GPSLongitude'];
       final gpsLngRef = data['GPS GPSLongitudeRef'];
-      
+
       if (gpsLat == null || gpsLng == null) {
         return {'latitude': null, 'longitude': null};
       }
-      
+
       double? latitude = _convertGpsCoordinate(gpsLat, gpsLatRef);
       double? longitude = _convertGpsCoordinate(gpsLng, gpsLngRef);
-      
+
       return {'latitude': latitude, 'longitude': longitude};
     } catch (e) {
       debugPrint('Error extracting GPS data: $e');
@@ -481,13 +515,14 @@ class PhotoService {
         final degrees = coordinate.ratios[0].toDouble();
         final minutes = coordinate.ratios[1].toDouble();
         final seconds = coordinate.ratios[2].toDouble();
-        
+
         double result = degrees + (minutes / 60.0) + (seconds / 3600.0);
-        
-        if (reference != null && (reference.printable == 'S' || reference.printable == 'W')) {
+
+        if (reference != null &&
+            (reference.printable == 'S' || reference.printable == 'W')) {
           result = -result;
         }
-        
+
         return result;
       }
     } catch (e) {
@@ -500,24 +535,28 @@ class PhotoService {
     try {
       if (kIsWeb) {
         // On web, EXIF extraction is not reliable, return current time
-        debugPrint('Date extraction not supported on web platform, using current time');
+        debugPrint(
+          'Date extraction not supported on web platform, using current time',
+        );
         return DateTime.now();
       }
-      
+
       final bytes = await File(imagePath).readAsBytes();
       final data = await readExifFromBytes(bytes);
-      
+
       if (data.isEmpty) {
         return null;
       }
-      
+
       final dateTime = data['EXIF DateTimeOriginal'] ?? data['Image DateTime'];
       if (dateTime != null) {
         // Parse EXIF date format: "YYYY:MM:DD HH:MM:SS"
-        final dateStr = dateTime.printable.replaceFirst(':', '-').replaceFirst(':', '-');
+        final dateStr = dateTime.printable
+            .replaceFirst(':', '-')
+            .replaceFirst(':', '-');
         return DateTime.tryParse(dateStr);
       }
-      
+
       return null;
     } catch (e) {
       debugPrint('Error extracting date from image: $e');
@@ -535,22 +574,22 @@ class PhotoService {
         // On web, return the source path as is (blob URL)
         return sourcePath;
       }
-      
+
       final Directory appDir = await getApplicationDocumentsDirectory();
       final String photoDir = join(appDir.path, 'photos', photoPointId);
-      
+
       // Create directory if it doesn't exist
       await Directory(photoDir).create(recursive: true);
-      
+
       final String destinationPath = join(photoDir, '$photoId.jpg');
-      
+
       // Copy and resize the image
       final bytes = await File(sourcePath).readAsBytes();
       var image = img.decodeImage(bytes);
       if (image == null) {
         throw Exception('Failed to decode image');
       }
-      
+
       // Resize if too large
       if (image.width > 1920 || image.height > 1920) {
         image = img.copyResize(
@@ -560,10 +599,10 @@ class PhotoService {
           maintainAspect: true,
         );
       }
-      
+
       final compressedBytes = img.encodeJpg(image, quality: 85);
       await File(destinationPath).writeAsBytes(compressedBytes);
-      
+
       return destinationPath;
     } catch (e) {
       debugPrint('Error copying library photo: $e');
@@ -571,9 +610,13 @@ class PhotoService {
     }
   }
 
-  Future<String?> _createWatermarkedPhoto(String originalPath, Photo photo) async {
+  Future<String?> _createWatermarkedPhoto(
+    String originalPath,
+    Photo photo,
+  ) async {
     try {
-      final image = await getPhotoImageLegacy(originalPath);
+      final bytes = await File(originalPath).readAsBytes();
+      final image = img.decodeImage(bytes);
       if (image == null) return null;
 
       final watermarkedImage = await _addWatermark(image, photo);
@@ -586,11 +629,14 @@ class PhotoService {
       }
 
       final Directory tempDir = await getTemporaryDirectory();
-      final String watermarkedPath = join(tempDir.path, 'watermarked_${photo.id}.jpg');
-      
+      final String watermarkedPath = join(
+        tempDir.path,
+        'watermarked_${photo.id}.jpg',
+      );
+
       final jpgBytes = img.encodeJpg(watermarkedImage, quality: 85);
       await File(watermarkedPath).writeAsBytes(jpgBytes);
-      
+
       return watermarkedPath;
     } catch (e) {
       debugPrint('Error creating watermarked photo: $e');
@@ -603,48 +649,61 @@ class PhotoService {
       final watermarkedImage = img.Image.from(image);
       final imageWidth = watermarkedImage.width;
       final imageHeight = watermarkedImage.height;
-      
+
       final fontSize = (imageWidth * 0.08).round().clamp(40, 80);
       final margin = (imageWidth * 0.03).round().clamp(15, 30);
       final textPadding = (fontSize * 0.3).round().clamp(3, 8);
-      
+
       final watermarkText = _formatWatermarkText(photo);
       final lines = watermarkText.split('\n');
-      
+
       final lineHeight = fontSize + 8;
       final totalTextHeight = lines.length * lineHeight;
-      
+
       // Position text in bottom-left corner with margin from edges
       final startY = imageHeight - totalTextHeight - margin;
-      
+
       int currentY = startY;
       for (String line in lines) {
         // Calculate text width for this line (approximate)
         final textWidth = line.length * (fontSize * 0.6).round();
         final backgroundWidth = textWidth + (textPadding * 2);
         final backgroundHeight = lineHeight;
-        
+
         // Draw semitransparent background behind this line of text only
-        for (int y = currentY - textPadding; y < currentY + backgroundHeight - textPadding; y++) {
-          for (int x = margin - textPadding; x < margin + backgroundWidth - textPadding; x++) {
+        for (
+          int y = currentY - textPadding;
+          y < currentY + backgroundHeight - textPadding;
+          y++
+        ) {
+          for (
+            int x = margin - textPadding;
+            x < margin + backgroundWidth - textPadding;
+            x++
+          ) {
             if (x >= 0 && x < imageWidth && y >= 0 && y < imageHeight) {
               final originalPixel = watermarkedImage.getPixel(x, y);
               final originalRed = originalPixel.r.round();
               final originalGreen = originalPixel.g.round();
               final originalBlue = originalPixel.b.round();
-              
+
               // Blend with semitransparent black (60% opacity)
               final alpha = 0.6;
               final blendedRed = ((1 - alpha) * originalRed).round();
               final blendedGreen = ((1 - alpha) * originalGreen).round();
               final blendedBlue = ((1 - alpha) * originalBlue).round();
-              
-              final blendedColor = img.ColorRgba8(blendedRed, blendedGreen, blendedBlue, 255);
+
+              final blendedColor = img.ColorRgba8(
+                blendedRed,
+                blendedGreen,
+                blendedBlue,
+                255,
+              );
               watermarkedImage.setPixel(x, y, blendedColor);
             }
           }
         }
-        
+
         // Draw white text on top
         _drawSimpleText(
           watermarkedImage,
@@ -656,7 +715,7 @@ class PhotoService {
         );
         currentY += lineHeight;
       }
-      
+
       return watermarkedImage;
     } catch (e) {
       debugPrint('Error adding watermark: $e');
@@ -664,18 +723,18 @@ class PhotoService {
     }
   }
 
-  void _drawSimpleText(img.Image image, String text, int x, int y, int fontSize, img.Color color) {
+  void _drawSimpleText(
+    img.Image image,
+    String text,
+    int x,
+    int y,
+    int fontSize,
+    img.Color color,
+  ) {
     final font = img.arial14;
-    
+
     try {
-      img.drawString(
-        image,
-        text,
-        font: font,
-        x: x,
-        y: y,
-        color: color,
-      );
+      img.drawString(image, text, font: font, x: x, y: y, color: color);
     } catch (e) {
       debugPrint('Error drawing text: $e');
     }
@@ -683,9 +742,10 @@ class PhotoService {
 
   String _formatWatermarkText(Photo photo) {
     final date = _formatDateTime(photo.takenAt);
-    final coords = '${photo.latitude.toStringAsFixed(6)}, ${photo.longitude.toStringAsFixed(6)}';
+    final coords =
+        '${photo.latitude.toStringAsFixed(6)}, ${photo.longitude.toStringAsFixed(6)}';
     final direction = _formatCompassDirection(photo.compassDirection);
-    
+
     return '$date\n$coords\n$direction';
   }
 
@@ -735,11 +795,11 @@ class PhotoService {
     }
   }
 
-
   PhotoOrientation getCurrentOrientation() {
     // Try to get orientation from media query if available, otherwise use portrait as default
     try {
-      final orientation = WidgetsBinding.instance.platformDispatcher.views.first.physicalSize;
+      final orientation =
+          WidgetsBinding.instance.platformDispatcher.views.first.physicalSize;
       if (orientation.width > orientation.height) {
         return PhotoOrientation.landscape;
       } else {
@@ -756,22 +816,27 @@ class PhotoService {
         .trim()
         .replaceAll(RegExp(r'[<>:"/\\|?*]'), '_')
         .replaceAll(RegExp(r'\s+'), '_');
-    
+
     // Remove leading/trailing underscores and ensure we don't have an empty name
     sanitizedName = sanitizedName.replaceAll(RegExp(r'^_+|_+$'), '');
-    
+
     if (sanitizedName.isEmpty) {
       sanitizedName = 'photo';
     }
-    
-    final dateStr = '${photoDate.year}'
+
+    final dateStr =
+        '${photoDate.year}'
         '${photoDate.month.toString().padLeft(2, '0')}'
         '${photoDate.day.toString().padLeft(2, '0')}';
-    
+
     return '${sanitizedName}_$dateStr';
   }
 
-  Future<String?> renamePhotoWithCorrectFilename(String currentFilePath, String photoPointName, DateTime photoDate) async {
+  Future<String?> renamePhotoWithCorrectFilename(
+    String currentFilePath,
+    String photoPointName,
+    DateTime photoDate,
+  ) async {
     try {
       final currentFile = File(currentFilePath);
       if (!await currentFile.exists()) {
@@ -781,14 +846,14 @@ class PhotoService {
 
       // Generate the correct filename
       final correctFilename = generateShareFilename(photoPointName, photoDate);
-      
+
       // Get the directory from the current path
       final directory = currentFile.parent;
       final newFilePath = join(directory.path, '$correctFilename.jpg');
-      
+
       // Rename the file
       final newFile = await currentFile.rename(newFilePath);
-      
+
       return newFile.path;
     } catch (e) {
       debugPrint('Error renaming photo file: $e');
