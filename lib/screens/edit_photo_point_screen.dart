@@ -23,14 +23,15 @@ class _EditPhotoPointScreenState extends State<EditPhotoPointScreen> {
 
   bool _isSaving = false;
 
-  bool get _canSave =>
-      _nameController.text.trim().isNotEmpty && !_isSaving;
+  bool get _canSave => _nameController.text.trim().isNotEmpty && !_isSaving;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.photoPoint.name);
-    _notesController = TextEditingController(text: widget.photoPoint.notes ?? '');
+    _notesController = TextEditingController(
+      text: widget.photoPoint.notes ?? '',
+    );
     _latitudeController = TextEditingController(
       text: widget.photoPoint.latitude?.toStringAsFixed(6) ?? '',
     );
@@ -98,7 +99,6 @@ class _EditPhotoPointScreenState extends State<EditPhotoPointScreen> {
     );
   }
 
-
   Future<void> _savePhotoPoint() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -126,7 +126,9 @@ class _EditPhotoPointScreenState extends State<EditPhotoPointScreen> {
       );
 
       if (mounted) {
-        await context.read<AppStateProvider>().updatePhotoPoint(updatedPhotoPoint);
+        await context.read<AppStateProvider>().updatePhotoPoint(
+          updatedPhotoPoint,
+        );
         if (mounted) {
           Navigator.of(context).pop();
         }

@@ -17,7 +17,7 @@ extract_version() {
     local version=$1
     VERSION_PART=$(echo $version | cut -d'+' -f1)
     BUILD_PART=$(echo $version | cut -d'+' -f2)
-    
+
     MAJOR=$(echo $VERSION_PART | cut -d'.' -f1)
     MINOR=$(echo $VERSION_PART | cut -d'.' -f2)
     PATCH=$(echo $VERSION_PART | cut -d'.' -f3)
@@ -28,7 +28,7 @@ extract_version() {
 update_version() {
     local new_version=$1
     local new_build=$2
-    
+
     sed -i '' "s/version: .*/version: $new_version+$new_build/" $VERSION_FILE
     echo "✅ Updated version to: $new_version+$new_build"
 }

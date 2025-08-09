@@ -135,7 +135,7 @@ class SaveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final canSave = onPressed != null && !isLoading;
-    
+
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: ElevatedButton(
@@ -147,13 +147,8 @@ class SaveButton extends StatelessWidget {
           shadowColor: canSave
               ? Colors.orange.withValues(alpha: 0.4)
               : Colors.grey.withValues(alpha: 0.2),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 12,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
         child: isLoading
             ? const SizedBox(

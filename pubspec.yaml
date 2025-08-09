@@ -34,54 +34,54 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  
+
   # Camera functionality
   camera: ^0.10.5+9
-  
+
   # GPS and location services
   geolocator: ^12.0.0
-  
+
   # Compass functionality
   flutter_compass: ^0.8.0
-  
+
   # Local database storage
   sqflite: ^2.3.3+1
-  
+
   # Path provider for file storage
   path_provider: ^2.1.3
-  
+
   # Web-compatible storage
   shared_preferences: ^2.2.3
-  
+
   # Path for file operations
   path: ^1.9.0
-  
+
   # Permissions handling
   permission_handler: ^11.3.1
-  
+
   # Sharing functionality
   share_plus: ^10.0.0
-  
+
   # Image handling
   image: ^4.1.7
-  
+
   # UUID generation
   uuid: ^4.4.0
-  
+
   # State management
   provider: ^6.1.2
-  
+
   # JSON serialization
   json_annotation: ^4.9.0
-  
+
   # Photo library access
   image_picker: ^1.0.7
   photo_manager: ^3.5.0
   photo_manager_image_provider: ^2.1.0
-  
+
   # EXIF data extraction
   exif: ^3.3.0
-  
+
   # Map functionality
   flutter_map: ^7.0.2
   latlong2: ^0.9.1
@@ -96,17 +96,17 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
-  
+
   # Code generation
   build_runner: ^2.4.11
   json_serializable: ^6.8.0
-  
+
   # App icon generation
   flutter_launcher_icons: ^0.13.1
-  
+
   # Splash screen generation
   flutter_native_splash: ^2.4.0
-  
+
   # Testing packages
   mockito: ^5.4.4
   integration_test:

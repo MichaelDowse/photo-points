@@ -132,10 +132,12 @@ class _ShowPhotoPointScreenState extends State<ShowPhotoPointScreen> {
             _buildDetailRow(
               Icons.location_on,
               'GPS Coordinates',
-              photoPoint.latitude?.toStringAsFixed(6) ?? 
-                photoPoint.initialPhoto?.latitude.toStringAsFixed(6) ?? 'N/A',
-              photoPoint.longitude?.toStringAsFixed(6) ?? 
-                photoPoint.initialPhoto?.longitude.toStringAsFixed(6) ?? 'N/A',
+              photoPoint.latitude?.toStringAsFixed(6) ??
+                  photoPoint.initialPhoto?.latitude.toStringAsFixed(6) ??
+                  'N/A',
+              photoPoint.longitude?.toStringAsFixed(6) ??
+                  photoPoint.initialPhoto?.longitude.toStringAsFixed(6) ??
+                  'N/A',
             ),
             const SizedBox(height: 12),
             _buildDetailRow(

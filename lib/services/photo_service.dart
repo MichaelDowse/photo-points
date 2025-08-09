@@ -84,20 +84,14 @@ class PhotoService {
           }
 
           // Save to Photos Library and get asset ID
-          final AssetEntity? asset = await PhotoManager.editor
-              .saveImageWithPath(
-                imageFile.path,
-                title: 'PhotoPoint_${photoPointId}_$photoId',
-              );
+          final AssetEntity asset = await PhotoManager.editor.saveImageWithPath(
+            imageFile.path,
+            title: 'PhotoPoint_${photoPointId}_$photoId',
+          );
 
-          if (asset != null) {
-            // Clean up temporary file
-            await File(imageFile.path).delete();
-            return asset.id;
-          } else {
-            debugPrint('Failed to save photo to Photos Library');
-            return null;
-          }
+          // Clean up temporary file
+          await File(imageFile.path).delete();
+          return asset.id;
         } catch (e) {
           debugPrint('Error saving to Photos Library: $e');
           // Fallback: save to app directory as before
@@ -460,8 +454,9 @@ class PhotoService {
   String formatFileSize(int bytes) {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    if (bytes < 1024 * 1024 * 1024)
+    if (bytes < 1024 * 1024 * 1024) {
       return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 

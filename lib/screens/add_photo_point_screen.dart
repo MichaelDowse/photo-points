@@ -61,11 +61,7 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('New Photo Point'),
-        actions: [
-          SaveButton(
-            onPressed: _canSave ? _savePhotoPoint : null,
-          ),
-        ],
+        actions: [SaveButton(onPressed: _canSave ? _savePhotoPoint : null)],
       ),
       body: Form(
         key: _formKey,
@@ -313,7 +309,6 @@ class _AddPhotoPointScreenState extends State<AddPhotoPointScreen> {
       ],
     );
   }
-
 
   Future<void> _capturePhoto() async {
     setState(() {

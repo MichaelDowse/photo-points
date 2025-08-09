@@ -67,11 +67,11 @@ if [ -f "coverage/lcov.info" ]; then
     # Extract coverage percentage (this is a simplified check)
     lines_covered=$(grep -c "LF:" coverage/lcov.info || echo "0")
     lines_hit=$(grep -c "LH:" coverage/lcov.info || echo "0")
-    
+
     if [ "$lines_covered" -gt 0 ]; then
         coverage_percent=$((lines_hit * 100 / lines_covered))
         echo -e "${BLUE}📈 Line coverage: ${coverage_percent}%${NC}"
-        
+
         if [ "$coverage_percent" -ge 80 ]; then
             echo -e "${GREEN}✅ Coverage threshold met (≥80%)${NC}"
         else

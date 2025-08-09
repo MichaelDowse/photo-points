@@ -4,64 +4,64 @@
       <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#2E7D32;stop-opacity:1" />
     </linearGradient>
-    
+
     <linearGradient id="cameraGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#E0E0E0;stop-opacity:1" />
     </linearGradient>
-    
+
     <linearGradient id="pinGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#FF5722;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#D32F2F;stop-opacity:1" />
     </linearGradient>
-    
+
     <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
       <feDropShadow dx="2" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.3"/>
     </filter>
   </defs>
-  
+
   <!-- Background circle -->
   <circle cx="512" cy="512" r="450" fill="url(#backgroundGradient)" />
-  
+
   <!-- Camera body -->
   <rect x="256" y="300" width="512" height="320" rx="40" ry="40" fill="url(#cameraGradient)" stroke="#BDBDBD" stroke-width="4" filter="url(#shadow)"/>
-  
+
   <!-- Camera lens -->
   <circle cx="512" cy="460" r="100" fill="#424242" stroke="#757575" stroke-width="6"/>
   <circle cx="512" cy="460" r="70" fill="#1976D2" stroke="#0D47A1" stroke-width="3"/>
   <circle cx="512" cy="460" r="40" fill="#0D47A1" opacity="0.8"/>
-  
+
   <!-- Camera viewfinder -->
   <rect x="620" y="330" width="80" height="60" rx="8" ry="8" fill="#424242" stroke="#757575" stroke-width="2"/>
   <rect x="630" y="340" width="60" height="40" rx="4" ry="4" fill="#1976D2"/>
-  
+
   <!-- Camera flash -->
   <rect x="300" y="330" width="50" height="30" rx="8" ry="8" fill="#FFC107" stroke="#FF8F00" stroke-width="2"/>
-  
+
   <!-- Location pin -->
-  <path d="M 650 150 C 650 120, 680 90, 710 90 C 740 90, 770 120, 770 150 C 770 180, 710 250, 710 250 C 710 250, 650 180, 650 150 Z" 
+  <path d="M 650 150 C 650 120, 680 90, 710 90 C 740 90, 770 120, 770 150 C 770 180, 710 250, 710 250 C 710 250, 650 180, 650 150 Z"
         fill="url(#pinGradient)" stroke="#B71C1C" stroke-width="3" filter="url(#shadow)"/>
   <circle cx="710" cy="150" r="20" fill="#FFFFFF"/>
-  
+
   <!-- Environmental elements - leaves -->
   <path d="M 200 200 Q 170 170, 150 200 Q 170 230, 200 200 Z" fill="#66BB6A" opacity="0.8"/>
   <path d="M 170 240 Q 140 210, 120 240 Q 140 270, 170 240 Z" fill="#4CAF50" opacity="0.8"/>
   <path d="M 850 780 Q 880 750, 900 780 Q 880 810, 850 780 Z" fill="#66BB6A" opacity="0.8"/>
   <path d="M 820 820 Q 850 790, 870 820 Q 850 850, 820 820 Z" fill="#4CAF50" opacity="0.8"/>
-  
+
   <!-- Grid lines for photo composition -->
   <line x1="256" y1="380" x2="768" y2="380" stroke="#FFFFFF" stroke-width="1" opacity="0.3"/>
   <line x1="256" y1="540" x2="768" y2="540" stroke="#FFFFFF" stroke-width="1" opacity="0.3"/>
   <line x1="426" y1="300" x2="426" y2="620" stroke="#FFFFFF" stroke-width="1" opacity="0.3"/>
   <line x1="598" y1="300" x2="598" y2="620" stroke="#FFFFFF" stroke-width="1" opacity="0.3"/>
-  
+
   <!-- Compass element -->
   <circle cx="400" cy="700" r="60" fill="#37474F" stroke="#263238" stroke-width="3" filter="url(#shadow)"/>
   <circle cx="400" cy="700" r="45" fill="#546E7A" stroke="#37474F" stroke-width="2"/>
   <polygon points="400,665 410,685 400,705 390,685" fill="#F44336"/>
   <polygon points="400,695 410,715 400,735 390,715" fill="#FFFFFF"/>
   <text x="400" y="675" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">N</text>
-  
+
   <!-- Time series indicator -->
   <g transform="translate(620, 700)">
     <circle cx="0" cy="0" r="8" fill="#4CAF50" opacity="0.9"/>
@@ -69,7 +69,7 @@
     <circle cx="50" cy="0" r="8" fill="#CDDC39" opacity="0.5"/>
     <line x1="-10" y1="0" x2="60" y2="0" stroke="#66BB6A" stroke-width="2" opacity="0.6"/>
   </g>
-  
+
   <!-- App name text (subtle) -->
   <text x="512" y="900" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#FFFFFF" opacity="0.9">Photo Points</text>
 </svg>

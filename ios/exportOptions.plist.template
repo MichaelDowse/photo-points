@@ -5,39 +5,39 @@
     <!-- Distribution method: development, ad-hoc, app-store, enterprise -->
     <key>method</key>
     <string>ad-hoc</string>
-    
+
     <!-- Your Apple Developer Team ID -->
     <key>teamID</key>
     <string>YOUR_TEAM_ID</string>
-    
+
     <!-- Signing style: automatic or manual -->
     <key>signingStyle</key>
     <string>automatic</string>
-    
+
     <!-- Disable bitcode for smaller file sizes -->
     <key>compileBitcode</key>
     <false/>
-    
+
     <!-- Disable app thinning for universal compatibility -->
     <key>thinning</key>
     <string>&lt;none&gt;</string>
-    
+
     <!-- Export destination -->
     <key>destination</key>
     <string>export</string>
-    
+
     <!-- Strip Swift symbols for smaller file sizes -->
     <key>stripSwiftSymbols</key>
     <true/>
-    
+
     <!-- Upload symbols to Apple for crash reporting -->
     <key>uploadSymbols</key>
     <true/>
-    
+
     <!-- Upload bitcode to Apple (only for app-store method) -->
     <key>uploadBitcode</key>
     <false/>
-    
+
     <!-- Include manifest for wireless distribution -->
     <key>manifest</key>
     <dict>
@@ -51,7 +51,7 @@
 </dict>
 </plist>
 
-<!-- 
+<!--
 SETUP INSTRUCTIONS:
 1. Copy this file to ios/exportOptions.plist
 2. Replace YOUR_TEAM_ID with your actual Apple Developer Team ID

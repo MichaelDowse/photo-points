@@ -1,0 +1,73 @@
+repos:
+  - repo: local
+    hooks:
+      - id: flutter-pub-get
+        name: Flutter pub get
+        entry: flutter pub get
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: flutter-build-runner
+        name: Flutter build runner (code generation)
+        entry: flutter packages pub run build_runner build --delete-conflicting-outputs
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: flutter-analyze
+        name: Flutter analyzer
+        entry: flutter analyze
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: dart-format-check
+        name: Dart format check
+        entry: dart format --set-exit-if-changed .
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: flutter-test-unit
+        name: Flutter unit tests
+        entry: flutter test test/unit/
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: flutter-test-widget
+        name: Flutter widget tests
+        entry: flutter test test/widget/
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [pre-commit]
+
+      # Integration tests are commented out for local pre-commit
+      # as they require device setup. CI will run them instead.
+      # - id: flutter-test-integration
+      #   name: Flutter integration tests
+      #   entry: flutter test integration_test/
+      #   language: system
+      #   always_run: true
+      #   pass_filenames: false
+      #   stages: [pre-commit]
+
+  # Additional helpful hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '\.md$'
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=1024']
+      - id: check-merge-conflict
