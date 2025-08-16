@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../models/photo_point.dart';
+import '../models/photo.dart';
 
 class PhotoPointCard extends StatelessWidget {
   final PhotoPoint photoPoint;
@@ -92,8 +93,15 @@ class PhotoPointCard extends StatelessWidget {
   }
 
   Widget _buildThumbnail(BuildContext context, String filePath) {
+    // Calculate width based on photo orientation
+    final initialPhoto = photoPoint.initialPhoto;
+    final isPortrait = initialPhoto?.orientation == PhotoOrientation.portrait;
+    final width = isPortrait
+        ? 60.0
+        : 80.0; // Narrower for portrait, standard for landscape
+
     return Container(
-      width: 80,
+      width: width,
       height: 80,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),

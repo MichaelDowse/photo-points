@@ -23,21 +23,75 @@ class PhotoGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        childAspectRatio: 1,
-      ),
-      itemCount: photos.length,
-      itemBuilder: (context, index) {
-        final photo = photos[index];
-        return _buildPhotoItem(context, photo);
-      },
+    // Use a staggered grid to accommodate different aspect ratios
+    return _buildStaggeredGrid(context);
+  }
+
+  Widget _buildStaggeredGrid(BuildContext context) {
+    // For now, we'll use a custom layout that arranges photos in rows
+    // with appropriate aspect ratios
+    return SingleChildScrollView(
+      child: Column(children: _buildPhotoRows(context)),
     );
+  }
+
+  List<Widget> _buildPhotoRows(BuildContext context) {
+    final List<Widget> rows = [];
+
+    for (int i = 0; i < photos.length; i += 2) {
+      final List<Widget> rowChildren = [];
+
+      // First photo in row
+      final photo1 = photos[i];
+      final isPortrait1 = photo1.orientation == PhotoOrientation.portrait;
+      final flex1 = isPortrait1 ? 3 : 4; // Portrait takes less space
+
+      rowChildren.add(
+        Expanded(
+          flex: flex1,
+          child: AspectRatio(
+            aspectRatio: isPortrait1
+                ? 0.75
+                : 1.33, // 3:4 for portrait, 4:3 for landscape
+            child: _buildPhotoItem(context, photo1),
+          ),
+        ),
+      );
+
+      // Add spacing
+      if (i + 1 < photos.length) {
+        rowChildren.add(const SizedBox(width: 8));
+      }
+
+      // Second photo in row (if exists)
+      if (i + 1 < photos.length) {
+        final photo2 = photos[i + 1];
+        final isPortrait2 = photo2.orientation == PhotoOrientation.portrait;
+        final flex2 = isPortrait2 ? 3 : 4;
+
+        rowChildren.add(
+          Expanded(
+            flex: flex2,
+            child: AspectRatio(
+              aspectRatio: isPortrait2 ? 0.75 : 1.33,
+              child: _buildPhotoItem(context, photo2),
+            ),
+          ),
+        );
+      } else {
+        // If odd number of photos, add spacer
+        rowChildren.add(const Expanded(flex: 4, child: SizedBox()));
+      }
+
+      rows.add(Row(children: rowChildren));
+
+      // Add spacing between rows
+      if (i + 2 < photos.length) {
+        rows.add(const SizedBox(height: 8));
+      }
+    }
+
+    return rows;
   }
 
   Widget _buildPhotoItem(BuildContext context, Photo photo) {

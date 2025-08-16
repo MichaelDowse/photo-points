@@ -54,9 +54,9 @@ void main() {
         ),
       );
 
-      // Verify grid is displayed
+      // Verify custom layout is displayed
       expect(find.byType(PhotoGrid), findsOneWidget);
-      expect(find.byType(GridView), findsOneWidget);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
     });
 
     testWidgets('should handle photo tap callback', (tester) async {
@@ -92,9 +92,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Since the test environment doesn't have actual images, the PhotoGrid will show error placeholders
-      // but the GestureDetector should still be there. Let's verify the grid is rendered first.
+      // but the GestureDetector should still be there. Let's verify the layout is rendered first.
       expect(find.byType(PhotoGrid), findsOneWidget);
-      expect(find.byType(GridView), findsOneWidget);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
 
       // For now, just verify that the PhotoGrid widget is properly constructed with the callbacks
       // The actual tap testing is difficult without real images, so we'll test this differently
@@ -133,9 +133,9 @@ void main() {
         ),
       );
 
-      // Verify grid displays photos
+      // Verify layout displays photos
       expect(find.byType(PhotoGrid), findsOneWidget);
-      expect(find.byType(GridView), findsOneWidget);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
     });
 
     testWidgets('should handle single photo', (tester) async {
@@ -161,7 +161,7 @@ void main() {
 
       // Verify single photo is displayed
       expect(find.byType(PhotoGrid), findsOneWidget);
-      expect(find.byType(GridView), findsOneWidget);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
     });
 
     testWidgets('should handle many photos', (tester) async {
@@ -186,9 +186,9 @@ void main() {
         ),
       );
 
-      // Verify grid handles many photos
+      // Verify layout handles many photos
       expect(find.byType(PhotoGrid), findsOneWidget);
-      expect(find.byType(GridView), findsOneWidget);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
     });
 
     testWidgets('should be scrollable with many photos', (tester) async {
@@ -213,12 +213,15 @@ void main() {
         ),
       );
 
-      // Verify grid is scrollable
+      // Verify layout is scrollable
       expect(find.byType(PhotoGrid), findsOneWidget);
-      expect(find.byType(GridView), findsOneWidget);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
 
       // Try to scroll
-      await tester.drag(find.byType(GridView), const Offset(0, -500));
+      await tester.drag(
+        find.byType(SingleChildScrollView),
+        const Offset(0, -500),
+      );
       await tester.pumpAndSettle();
 
       // Should not throw any errors
@@ -246,9 +249,9 @@ void main() {
         ),
       );
 
-      // Verify grid displays with metadata
+      // Verify layout displays with metadata
       expect(find.byType(PhotoGrid), findsOneWidget);
-      expect(find.byType(GridView), findsOneWidget);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
     });
 
     testWidgets('should handle different aspect ratios', (tester) async {
@@ -276,9 +279,10 @@ void main() {
         ),
       );
 
-      // Verify grid with custom aspect ratio
+      // Verify layout with aspect ratios
       expect(find.byType(PhotoGrid), findsOneWidget);
-      expect(find.byType(GridView), findsOneWidget);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
+      expect(find.byType(AspectRatio), findsWidgets);
     });
 
     testWidgets('should handle custom cross axis count', (tester) async {
@@ -303,9 +307,10 @@ void main() {
         ),
       );
 
-      // Verify grid with custom column count
+      // Verify layout with photos arranged in rows
       expect(find.byType(PhotoGrid), findsOneWidget);
-      expect(find.byType(GridView), findsOneWidget);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
+      expect(find.byType(Row), findsWidgets);
     });
 
     testWidgets('should be accessible', (tester) async {
@@ -331,9 +336,9 @@ void main() {
 
       // Verify accessibility
       expect(find.byType(PhotoGrid), findsOneWidget);
-      expect(find.byType(GridView), findsOneWidget);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
 
-      // Grid should be accessible to screen readers
+      // Layout should be accessible to screen readers
       expect(find.byType(GestureDetector), findsWidgets);
     });
   });
